@@ -1,6 +1,6 @@
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
-import LocalStorage from "~/utils/store";
+import LocalStorage from "~/utils/localstorage";
 
 const driverObj = driver({
     showProgress: true,

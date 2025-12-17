@@ -1,4 +1,4 @@
-import { Facebook, Mail, Phone } from "lucide-react";
+import { Facebook, Mail } from "lucide-react";
 
 const Mentor = () => {
     return (
@@ -35,20 +35,7 @@ const Mentor = () => {
                             </a>
                         </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                        <div className="bg-primary/10 text-primary mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg">
-                            <Phone className="h-4 w-4" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                            <p className="text-xs font-medium text-gray-500">Số điện thoại</p>
-                            <a
-                                href="tel:+84123456789"
-                                className="text-primary hover:text-primary/80 mt-1 block text-sm transition-colors"
-                            >
-                                +84 123 456 789
-                            </a>
-                        </div>
-                    </div>
+
                     <div className="flex items-start gap-3">
                         <div className="bg-primary/10 text-primary mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg">
                             <Facebook className="h-4 w-4" />

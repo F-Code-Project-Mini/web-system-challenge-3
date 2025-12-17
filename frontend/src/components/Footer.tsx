@@ -9,7 +9,7 @@ const Footer = () => {
                     <div className="col-span-4">
                         <div className="flex items-center gap-2.5">
                             <img src="/fcode.png" alt="F-Code" className="h-8 w-8" />
-                            <span className="text-primary text-lg font-semibold">F-Code</span>
+                            <span className="text-primary text-xl font-bold">F-Code</span>
                         </div>
                         <p className="mt-3 text-sm leading-relaxed text-gray-600">
                             F-Code, thành lập năm 2014, là câu lạc bộ học thuật đầu tiên của Đại học FPT tại Thành phố
