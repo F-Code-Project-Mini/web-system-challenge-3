@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 import HomePage from "./pages/Home";
 import "./styles/global.css";
+import "animate.css";
 import MainLayout from "./layout/MainLayout";
 import ScoreBoardPage from "./pages/ScoreBoard";
 const App = () => {

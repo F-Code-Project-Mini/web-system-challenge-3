@@ -35,7 +35,9 @@ const Members = () => {
                         <tbody className="divide-y divide-gray-200 bg-white">
                             <tr className="transition-colors hover:bg-gray-50">
                                 <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">1</td>
-                                <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">Phạm Hoàng Tuấn</td>
+                                <td className="text-primary px-6 py-4 text-sm font-bold whitespace-nowrap">
+                                    Phạm Hoàng Tuấn (Leader)
+                                </td>
                                 <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">QE170100</td>
                                 <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">tuanph@fpt.edu.vn</td>
                                 <td className="px-6 py-4 text-sm whitespace-nowrap">

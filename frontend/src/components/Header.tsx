@@ -9,7 +9,7 @@ const Header = () => {
                 <div className="flex items-center gap-12">
                     <Link to="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-80">
                         <img src="/fcode.png" alt="F-Code" className="h-8 w-8" />
-                        <span className="text-primary text-lg font-bold">F-Code</span>
+                        <span className="text-primary text-xl font-bold">F-Code</span>
                     </Link>
                     <nav>
                         <ul className="flex items-center gap-1">
