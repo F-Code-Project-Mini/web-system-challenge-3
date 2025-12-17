@@ -22,7 +22,7 @@ const HomePage = () => {
             <section className="mt-5 grid grid-cols-12 gap-6">
                 <Timeline />
             </section>
-            <section className="mt-6 grid grid-cols-12 gap-6">
+            <section className="mt-6 grid grid-cols-12 gap-2">
                 <Members />
                 <Mentor />
             </section>
