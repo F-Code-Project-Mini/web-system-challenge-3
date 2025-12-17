@@ -43,6 +43,16 @@ class TopicRepository {
         });
     };
 
+    update = async (id: string, data: { title: string; filePath: string }) => {
+        return prisma.topic.update({
+            where: { id },
+            data: {
+                title: data.title,
+                filePath: data.filePath,
+            },
+        });
+    };
+
     findById = async (id: string) => {
         return prisma.topic.findUnique({
             where: { id },
