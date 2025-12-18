@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { ParamsDictionary } from "express-serve-static-core";
-import { HTTP_STATUS } from "~/constants/httpStatus";
 import { RoleType } from "~/constants/enums";
+import { HTTP_STATUS } from "~/constants/httpStatus";
 import topicRepository from "~/repositories/topic.repository";
-import { validate as uuidValidate } from "uuid";
+import { validate as uuidValidate, version as uuidVersion } from "uuid";
 
 interface TopicQuery {
     page?: string;
@@ -20,7 +20,7 @@ export const getAll = async (
         const page = Number(req.query.page ?? 1);
         const limit = Number(req.query.limit ?? 10);
 
-        if (Number.isNaN(page) || Number.isNaN(limit) || page < 1 || limit < 1) {
+        if (!Number.isInteger(page) || !Number.isInteger(limit) || page < 1 || limit < 1) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 status: false,
                 message: "Giá trị page/limit phải là số nguyên >= 1.",
@@ -58,22 +58,13 @@ export const getDetail = async (
     try {
         const { id } = req.params;
 
-        if (!uuidValidate(id)) {
+        if (!(uuidValidate(id) && uuidVersion(id) === 4)) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 status: false,
                 message: "Id topic không hợp lệ.",
             });
         }
 
-        const topic = await topicRepository.findById(id);
-        if (!topic) {
-            return res.status(HTTP_STATUS.NOT_FOUND).json({
-                status: false,
-                message: "Topic này không tồn tại trên hệ thống.",
-            });
-        }
-
-        // Candidate chỉ xem được topic của team mình
         if (req.role === RoleType.CANDIDATE) {
             if (!req.candidateId) {
                 return res.status(HTTP_STATUS.NOT_FOUND).json({
@@ -93,6 +84,14 @@ export const getDetail = async (
                     message: "Topic này không tồn tại trên hệ thống.",
                 });
             }
+        }
+
+        const topic = await topicRepository.findById(id);
+        if (!topic) {
+            return res.status(HTTP_STATUS.NOT_FOUND).json({
+                status: false,
+                message: "Topic này không tồn tại trên hệ thống.",
+            });
         }
 
         return res.status(HTTP_STATUS.OK).json({
@@ -118,10 +117,10 @@ export const create = async (
     next: NextFunction,
 ) => {
     try {
-        const { title, file_path } = req.body;
+        const title = req.body.title?.trim();
+        const filePath = req.body.file_path?.trim();
 
-        // validate
-        if (!title || !file_path) {
+        if (!title || !filePath) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 status: false,
                 message: "Các trường không được để trống.",
@@ -129,17 +128,23 @@ export const create = async (
         }
 
         try {
-            new URL(file_path);
+            const url = new URL(filePath);
+            if (url.protocol !== "http:" && url.protocol !== "https:") {
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    status: false,
+                    message: "file_path phải là url hợp lệ.",
+                });
+            }
         } catch {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 status: false,
-                message: "Đường dẫn file không hợp lệ.",
+                message: "file_path phải là url hợp lệ.",
             });
         }
 
         await topicRepository.create({
-            title: title.trim(),
-            filePath: file_path.trim(),
+            title,
+            filePath,
         });
 
         return res.status(HTTP_STATUS.CREATED).json({
@@ -159,16 +164,17 @@ export const update = async (
 ) => {
     try {
         const { id } = req.params;
-        const { title, file_path } = req.body;
+        const title = req.body.title?.trim();
+        const filePath = req.body.file_path?.trim();
 
-        if (!uuidValidate(id)) {
+        if (!(uuidValidate(id) && uuidVersion(id) === 4)) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 status: false,
                 message: "Id topic không hợp lệ.",
             });
         }
 
-        if (!title || !file_path) {
+        if (!title || !filePath) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 status: false,
                 message: "Các trường không được để trống.",
@@ -176,11 +182,17 @@ export const update = async (
         }
 
         try {
-            new URL(file_path);
+            const url = new URL(filePath);
+            if (url.protocol !== "http:" && url.protocol !== "https:") {
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    status: false,
+                    message: "file_path phải là url hợp lệ.",
+                });
+            }
         } catch {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 status: false,
-                message: "Đường dẫn file không hợp lệ.",
+                message: "file_path phải là url hợp lệ.",
             });
         }
 
@@ -192,10 +204,7 @@ export const update = async (
             });
         }
 
-        const updated = await topicRepository.update(id, {
-            title: title.trim(),
-            filePath: file_path.trim(),
-        });
+        const updated = await topicRepository.update(id, { title, filePath });
 
         return res.status(HTTP_STATUS.OK).json({
             status: true,
@@ -217,7 +226,7 @@ export const deleteTopic = async (req: Request<{ id: string }>, res: Response, n
     try {
         const { id } = req.params;
 
-        if (!uuidValidate(id)) {
+        if (!(uuidValidate(id) && uuidVersion(id) === 4)) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 status: false,
                 message: "Id topic không hợp lệ.",
@@ -232,7 +241,6 @@ export const deleteTopic = async (req: Request<{ id: string }>, res: Response, n
             });
         }
 
-        // Nếu topic đang được gán cho team thì không cho xóa
         const hasTeams = await topicRepository.hasTeams(id);
         if (hasTeams) {
             return res.status(HTTP_STATUS.CONFLICT).json({

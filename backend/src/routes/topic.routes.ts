@@ -6,8 +6,11 @@ import { attachUserRole } from "~/middlewares/topic.middlewares";
 
 const topicRouter = Router();
 
-topicRouter.get("/", auth, attachUserRole, isRole([RoleType.ADMIN]), topicController.getAll);
+// GET ALL/DETAIL: tất cả role (chỉ cần access token hợp lệ)
+topicRouter.get("/", auth, attachUserRole, topicController.getAll);
 topicRouter.get("/:id", auth, attachUserRole, topicController.getDetail);
+
+// CREATE/UPDATE/DELETE: chỉ ADMIN
 topicRouter.post("/", auth, attachUserRole, isRole([RoleType.ADMIN]), topicController.create);
 topicRouter.patch("/:id", auth, attachUserRole, isRole([RoleType.ADMIN]), topicController.update);
 topicRouter.delete("/:id", auth, attachUserRole, isRole([RoleType.ADMIN]), topicController.deleteTopic);
