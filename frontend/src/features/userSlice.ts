@@ -69,6 +69,8 @@ export const userSlice = createSlice({
 
         builder.addCase(getInfoUser.pending, (state) => {
             state.isLoading = true;
+            console.log("vô");
+            
         });
         builder.addCase(getInfoUser.fulfilled, (state, action: PayloadAction<UserType>) => {
             console.log({

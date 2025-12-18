@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import startTour from "~/components/AnimatedTour";
 import Footer from "~/components/Footer";
@@ -11,7 +11,8 @@ const MainLayout = () => {
     const { isLoading, isLogin, user, getUserInfo } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    useEffect(() => {
+    console.log("trước nè");
+    useLayoutEffect(() => {
         const checkAuth = async () => {
             const isLoginLocal = LocalStorage.getItem("login");
             if (isLoginLocal && !isLoading) {
@@ -30,13 +31,15 @@ const MainLayout = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoading, location.pathname]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (user.role === USER_ROLE.CANDIDATE && isLogin) {
             startTour();
         }
     }, [isLogin, user.role]);
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (user.role === USER_ROLE.JUDGE && location.pathname.includes("/judge") === false) {
+            console.log(location.pathname);
+
             navigate("/judge");
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

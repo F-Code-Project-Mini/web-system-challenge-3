@@ -1,4 +1,5 @@
-import { Facebook } from "lucide-react";
+import { LogIn, MousePointer2 } from "lucide-react";
+import { Link } from "react-router";
 import WelcomePartition from "~/components/WelcomePartition";
 
 const JudgePage = () => {
@@ -21,68 +22,42 @@ const JudgePage = () => {
                                         STT
                                     </th>
                                     <th className="px-3 py-2 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase sm:px-6 sm:py-3">
-                                        Họ và tên
-                                    </th>
-                                    <th className="hidden px-3 py-2 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase sm:table-cell sm:px-6 sm:py-3">
-                                        MSSV
-                                    </th>
-                                    <th className="hidden px-3 py-2 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase sm:px-6 sm:py-3 md:table-cell">
-                                        Email
+                                        Đề tài
                                     </th>
                                     <th className="px-3 py-2 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase sm:px-6 sm:py-3">
-                                        Facebook
+                                        Phòng
+                                    </th>
+                                    <th className="hidden px-3 py-2 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase sm:table-cell sm:px-6 sm:py-3">
+                                        Nhóm
+                                    </th>
+                                    <th className="hidden px-3 py-2 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase sm:px-6 sm:py-3 md:table-cell">
+                                        Bắt đầu
+                                    </th>
+                                    <th className="px-3 py-2 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase sm:px-6 sm:py-3">
+                                        Thao tác
                                     </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 bg-white">
                                 <tr className="transition-colors hover:bg-gray-50">
-                                    <td className="px-3 py-3 text-sm font-medium whitespace-nowrap text-gray-900 sm:px-6 sm:py-4">
-                                        1
+                                    <td className="px-3 py-3 text-sm text-gray-600 sm:table-cell sm:px-6 sm:py-4">1</td>
+                                    <td className="text-primary px-3 py-3 text-sm font-bold sm:table-cell sm:px-6 sm:py-4">
+                                        Database Websystem
                                     </td>
-                                    <td className="text-primary px-3 py-3 text-sm font-bold whitespace-nowrap sm:px-6 sm:py-4">
-                                        Phạm Hoàng Tuấn (Leader)
+                                    <td className="px-3 py-3 text-sm text-gray-600 sm:table-cell sm:px-6 sm:py-4">
+                                        010
                                     </td>
-                                    <td className="hidden px-3 py-3 text-sm whitespace-nowrap text-gray-600 sm:table-cell sm:px-6 sm:py-4">
-                                        QE170100
+                                    <td className="px-3 py-3 text-sm text-gray-600 sm:table-cell sm:px-6 sm:py-4">7</td>
+                                    <td className="px-3 py-3 text-sm text-gray-600 sm:table-cell sm:px-6 sm:py-4">
+                                        10:00 AM
                                     </td>
-                                    <td className="hidden px-3 py-3 text-sm whitespace-nowrap text-gray-600 sm:px-6 sm:py-4 md:table-cell">
-                                        tuanph@fpt.edu.vn
-                                    </td>
-                                    <td className="px-3 py-3 text-sm whitespace-nowrap sm:px-6 sm:py-4">
-                                        <a
-                                            href="https://facebook.com/tuanph"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-primary hover:text-primary/80 inline-flex items-center gap-1 transition-colors"
+                                    <td className="px-3 py-3 text-sm text-gray-600 sm:table-cell sm:px-6 sm:py-4">
+                                        <Link
+                                            to="/judge/barem/2000"
+                                            className="shadown-base inline-block w-fit cursor-pointer rounded-xl border bg-white p-2"
                                         >
-                                            <Facebook size={14} />
-                                            <span>tuanph</span>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr className="transition-colors hover:bg-gray-50">
-                                    <td className="px-3 py-3 text-sm font-medium whitespace-nowrap text-gray-900 sm:px-6 sm:py-4">
-                                        2
-                                    </td>
-                                    <td className="px-3 py-3 text-sm whitespace-nowrap text-gray-900 sm:px-6 sm:py-4">
-                                        Trần Văn An
-                                    </td>
-                                    <td className="hidden px-3 py-3 text-sm whitespace-nowrap text-gray-600 sm:table-cell sm:px-6 sm:py-4">
-                                        QE170101
-                                    </td>
-                                    <td className="hidden px-3 py-3 text-sm whitespace-nowrap text-gray-600 sm:px-6 sm:py-4 md:table-cell">
-                                        antv@fpt.edu.vn
-                                    </td>
-                                    <td className="px-3 py-3 text-sm whitespace-nowrap sm:px-6 sm:py-4">
-                                        <a
-                                            href="https://facebook.com/antv"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-primary hover:text-primary/80 inline-flex items-center gap-1 transition-colors"
-                                        >
-                                            <Facebook size={14} />
-                                            <span>antv</span>
-                                        </a>
+                                            <LogIn />
+                                        </Link>
                                     </td>
                                 </tr>
                             </tbody>

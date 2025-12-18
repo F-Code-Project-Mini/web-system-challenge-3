@@ -1,6 +1,7 @@
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Note } from "./Note";
+import Helper from "~/utils/helper";
 
 const baremJudge = [
     {
@@ -141,6 +142,7 @@ const baremJudge = [
 ];
 
 const JudgeBaremPage = () => {
+    const [timeCounter, setTimeCounter] = useState(2000);
     const candidates = ["Phạm Hoàng Tuấn", "Lâm Hoàng An", "Ngô Ngọc Gia Hân", "Hồ Lê Thiên An"];
     const [selectedCandidate, setSelectedCandidate] = useState(candidates[0]);
     const [scores, setScores] = useState<{ [key: string]: number }>({});
@@ -158,14 +160,18 @@ const JudgeBaremPage = () => {
             [key]: isNaN(numValue) ? 0 : numValue,
         }));
     };
-
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setTimeCounter((prev) => prev + 1);
+        }, 1000);
+        return () => clearInterval(intervalId);
+    }, []);
     return (
         <section className="px-4 sm:px-0">
             <div className="mb-6 sm:mb-8">
                 <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Chấm điểm Challenge 3</h1>
                 <p className="mt-2 text-sm text-gray-600">Vui lòng chọn ứng viên và điền điểm cho từng tiêu chí</p>
             </div>
-
             <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-xs sm:p-6">
                 <h3 className="text-primary mb-4 text-base font-semibold sm:text-lg">Ứng viên</h3>
                 <RadioGroup
@@ -189,13 +195,18 @@ const JudgeBaremPage = () => {
                     ))}
                 </RadioGroup>
             </div>
-
-            <section className="mb-6" id="barem-table">
+            <h3 className="text-center text-xl italic">
+                Bắt đầu được: <span className="text-primary">{Helper.formatDuration(timeCounter)}</span>
+            </h3>
+            <section className="my-6" id="barem-table">
                 <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
                     <div className="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white px-4 py-4 sm:px-6">
                         <h2 className="text-base font-bold text-gray-900 sm:text-lg">ỨNG VIÊN: Phạm Hoàng Tuấn</h2>
                         <p className="mt-1 text-xs text-gray-500 sm:text-sm">
                             Vui lòng nhập điểm cho từng tiêu chí dưới đây
+                        </p>
+                        <p className="mt-2 text-center font-bold text-red-600">
+                            Phòng chưa được start, BGK vui lòng liên hệ HOST phòng!
                         </p>
                     </div>
                     <div className="overflow-x-auto">
@@ -264,7 +275,8 @@ const JudgeBaremPage = () => {
                                                                 handleScoreChange(scoreKey, e.target.value)
                                                             }
                                                             placeholder="0"
-                                                            className="focus:border-primary focus:ring-primary w-16 rounded border border-gray-300 px-2 py-1.5 text-center text-sm transition-colors focus:ring-1 focus:outline-none"
+                                                            className="disabled:focus:border-primary disabled:focus:ring-primary w-16 rounded border border-gray-200 px-2 py-1.5 text-center text-sm transition-colors focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100"
+                                                            disabled={true}
                                                         />
                                                         <span className="text-sm font-medium text-gray-600">
                                                             / {part.maxScore}
@@ -284,20 +296,22 @@ const JudgeBaremPage = () => {
                 </div>
             </section>
 
-            <div className="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-xs sm:flex-row sm:items-center sm:justify-between sm:p-6">
-                <div className="flex items-baseline gap-2">
-                    <span className="text-md font-semibold text-gray-700 sm:text-lg">Tổng điểm:</span>
-                    <span
-                        className={`${totalCurrentScore <= totalMaxScore ? `text-primary` : `text-red-600`} text-2xl font-bold sm:text-3xl`}
-                    >
-                        {totalCurrentScore.toFixed(1)}
-                    </span>
-                    <span className="text-lg font-medium text-gray-600">/ {totalMaxScore}</span>
-                </div>
-                <span className="font-bold italic">Điểm được lưu tự động</span>
-            </div>
+            <TotalScore totalCurrentScore={totalCurrentScore} totalMaxScore={totalMaxScore} />
         </section>
     );
 };
-
+const TotalScore = ({ totalCurrentScore, totalMaxScore }: { totalCurrentScore: number; totalMaxScore: number }) => (
+    <div className="my-6 flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-xs sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <div className="flex items-baseline gap-2">
+            <span className="text-md font-semibold text-gray-700 sm:text-lg">Tổng điểm:</span>
+            <span
+                className={`${totalCurrentScore <= totalMaxScore ? `text-primary` : `text-red-600`} text-2xl font-bold sm:text-3xl`}
+            >
+                {totalCurrentScore.toFixed(1)}
+            </span>
+            <span className="text-lg font-medium text-gray-600">/ {totalMaxScore}</span>
+        </div>
+        <span className="font-bold italic">Điểm được lưu tự động</span>
+    </div>
+);
 export default JudgeBaremPage;
