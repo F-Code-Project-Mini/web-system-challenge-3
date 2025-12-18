@@ -3,14 +3,12 @@ import { ParamsDictionary } from "express-serve-static-core";
 import { RoleType } from "~/constants/enums";
 import { HTTP_STATUS } from "~/constants/httpStatus";
 import teamRepository from "~/repositories/team.repository";
-import { validate as uuidValidate, version as uuidVersion } from "uuid";
+import { isUuidV4 } from "~/utils/validation";
 
 interface TeamQuery {
     page?: string;
     limit?: string;
 }
-
-const isUuidV4 = (id: string) => uuidValidate(id) && uuidVersion(id) === 4;
 
 // GET ALL
 export const getAll = async (
@@ -46,7 +44,7 @@ export const getAll = async (
                 leader_id: team.leaderId,
                 topic_id: team.topicId,
                 mentor_note: team.mentorNote
-            })),
+            })),                                                                                                                       
             pagination: {
                 total: meta.total,
                 page: meta.page,

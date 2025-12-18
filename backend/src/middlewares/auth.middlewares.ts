@@ -3,6 +3,8 @@ import { TokenType } from "~/constants/enums";
 import { HTTP_STATUS } from "~/constants/httpStatus";
 import { ErrorWithStatus } from "~/rules/error";
 import AlgoJwt from "~/utils/jwt";
+import userRepository from "~/repositories/user.repository";
+import { RoleType } from "~/constants/enums";
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.access_token;
@@ -61,5 +63,30 @@ export const isRole = (roles: string[]) => async (req: Request, res: Response, n
         return res.status(HTTP_STATUS.UNAUTHORIZED).json({
             message: "Bạn không có quyền để thao tác!",
         });
+    }
+};
+export const attachUserRole = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (!req.userId) {
+            return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                status: false,
+                message: "Vui lòng đăng nhập trước khi thao tác.",
+            });
+        }
+
+        const user = await userRepository.findById(req.userId);
+        if (!user) {
+            return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                status: false,
+                message: "Tài khoản không tồn tại hoặc đã bị xoá.",
+            });
+        }
+
+        // Role từ Prisma enum trùng giá trị string với RoleType, cast để khớp type trong req.
+        req.role = user.role as unknown as RoleType;
+        req.candidateId = user.candidateId ?? undefined;
+        return next();
+    } catch (error) {
+        return next(error);
     }
 };
