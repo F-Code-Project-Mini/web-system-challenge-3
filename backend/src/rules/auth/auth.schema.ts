@@ -6,3 +6,9 @@ export const loginSchema = z.object({
         password: z.string().nullable(),
     }),
 });
+export const activeAccount = z.object({
+    params: z.object({
+        // check phải ở dạng jwtSchema
+        token: jwtSchema,
+    }),
+});

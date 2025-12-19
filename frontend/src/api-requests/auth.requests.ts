@@ -21,6 +21,11 @@ class AuthApi {
         );
         return response.data;
     };
+
+    static activeAccount = async (token: string) => {
+        const response = await publicApi.get(`/auth/active/token/${token}`);
+        return response.data;
+    };
     static logout = async () => {
         const response = await privateApi.post("/auth/logout", {});
         return response.data;

@@ -62,6 +62,11 @@ export const getInfo = async (req: Request, res: Response, next: NextFunction) =
     }
 };
 
+export const active = async (req: Request, res: Response, next: NextFunction) => {
+    const { token } = req.params;
+    res.json({ token });
+};
+
 export const refreshToken = async (
     req: Request<ParamsDictionary, any, RefreshTokenRequestBody>,
     res: Response,
