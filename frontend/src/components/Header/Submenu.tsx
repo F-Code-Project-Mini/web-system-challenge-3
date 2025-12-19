@@ -1,6 +1,5 @@
 import { LogOut } from "lucide-react";
 import React from "react";
-import { Link } from "react-router";
 import useAuth from "~/hooks/useAuth";
 
 const SubmenuHeader = ({ setShowUserMenu }: { setShowUserMenu: React.Dispatch<React.SetStateAction<boolean>> }) => {
