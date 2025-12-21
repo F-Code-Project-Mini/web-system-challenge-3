@@ -130,7 +130,7 @@ class TeamRepository {
         });
 
         if (!candidate || candidate.teamId !== teamId) {
-            return { ok: false, message: "Leader phải thuộc team này." };
+            return { ok: false, message: "Leader phải thuộc team này thì mới có thể cập nhật!" };
         }
 
         await prisma.team.update({
