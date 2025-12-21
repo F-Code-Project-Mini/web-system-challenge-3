@@ -17,7 +17,13 @@ export const getAllSchema = z.object({
 
 export const idParamSchema = z.object({
     params: z.object({
-        id: z.string().uuid(""),
+        id: z.string().uuid("ID không hợp lệ!"),
+    }),
+});
+export const uuidParamsAndBodySchema = z.object({
+    ...idParamSchema.shape,
+    body: z.object({
+        candidate_id: z.string().uuid("ID ứng viên không hợp lệ!"),
     }),
 });
 

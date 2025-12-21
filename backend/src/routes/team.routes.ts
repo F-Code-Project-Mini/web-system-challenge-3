@@ -3,7 +3,7 @@ import { validate } from "~/utils/validation";
 import { RoleType } from "~/constants/enums";
 import * as teamController from "~/controllers/team.controllers";
 import { auth, isRole } from "~/middlewares/auth.middlewares";
-import { getAllSchema, idParamSchema } from "~/rules/auth/auth.schema";
+import { getAllSchema, idParamSchema, uuidParamsAndBodySchema } from "~/rules/auth/auth.schema";
 
 const teamRouter = Router();
 
@@ -21,8 +21,14 @@ teamRouter.patch(
     "/:id/assign-member",
     auth,
     isRole([RoleType.ADMIN]),
-    validate(idParamSchema),
+    validate(uuidParamsAndBodySchema),
     teamController.assignMember,
 );
-teamRouter.patch("/:id/set-leader", auth, isRole([RoleType.ADMIN]), validate(idParamSchema), teamController.setLeader);
+teamRouter.patch(
+    "/:id/set-leader",
+    auth,
+    isRole([RoleType.ADMIN]),
+    validate(uuidParamsAndBodySchema),
+    teamController.setLeader,
+);
 export default teamRouter;
