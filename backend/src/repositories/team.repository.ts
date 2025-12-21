@@ -3,22 +3,39 @@ import { paginate } from "~/utils/pagination";
 
 class TeamRepository {
     findWithPagination = async ({ page, limit, mentorId }: { page?: number; limit?: number; mentorId?: string }) => {
-        const where = mentorId
-            ? {
-                  mentorship: {
-                      mentorId,
-                  },
-              }
-            : {};
-
+        const includeUser = {
+            omit: {
+                password: true,
+                candidateId: true,
+            },
+        };
+        const include = {
+            candidates: {
+                include: {
+                    user: includeUser,
+                },
+            },
+            mentorship: {
+                select: {
+                    mentor: {
+                        select: { fullName: true },
+                    },
+                },
+            },
+            leader: {
+                select: {
+                    id: true,
+                },
+            },
+            topic: true,
+        };
+        const datane = await prisma.team.findMany();
+      
         const { data, meta } = await paginate<any>(prisma.team, {
             page,
             limit,
-            where,
             orderBy: { id: "desc" },
-            include: {
-                candidates: true,
-            },
+            include,
         });
 
         return { teams: data, meta };
