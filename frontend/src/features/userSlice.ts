@@ -14,6 +14,16 @@ const initialState: ReduxType = {
         candidateId: "",
         createdAt: "",
         updatedAt: "",
+        candidate: {
+            id: "",
+            studentCode: "",
+            phone: "",
+            major: "",
+            semester: "",
+            teamId: "",
+            createdAt: "",
+            updatedAt: "",
+        },
     },
     isLoading: false,
 };

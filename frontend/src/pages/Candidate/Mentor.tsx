@@ -1,6 +1,6 @@
 import { Facebook, Mail } from "lucide-react";
 
-const Mentor = () => {
+const Mentor = ({ data }: { data: { fullName: string } | undefined }) => {
     return (
         <section className="col-span-1 lg:col-span-4" id="mentor">
             <div className="rounded-lg border border-gray-200 bg-white shadow-2xs lg:sticky lg:top-24">
@@ -16,7 +16,9 @@ const Mentor = () => {
                         </div>
                         <div>
                             <span className="text-xs font-medium tracking-wide text-gray-500 uppercase">Mentor</span>
-                            <h3 className="mt-0.5 text-base font-semibold text-gray-900 sm:text-lg">Phạm Hoàng Tuấn</h3>
+                            <h3 className="mt-0.5 text-base font-semibold text-gray-900 sm:text-lg">
+                                {data?.fullName}
+                            </h3>
                         </div>
                     </div>
                 </div>

@@ -3,9 +3,8 @@ import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import useIsMobile from "~/hooks/useIsMobile";
 
-export function ShowTopic() {
+export function ShowTopic({ urlPdf }: { urlPdf: string }) {
     const isMobile = useIsMobile();
-    const urlPdf = "https://drive.google.com/file/d/1j2ktFsO9MTN_9z9yrEaV1LXu36hEzPkL/preview";
     return (
         <Dialog>
             {isMobile ? (
