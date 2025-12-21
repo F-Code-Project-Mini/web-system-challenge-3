@@ -159,7 +159,7 @@ class AuthService {
         // Lưu lại refresh token vào redis
         console.log("refreshToken", refreshToken);
 
-        await redisClient.set(`refreshToken:${userId}`, refreshToken, ExpiresInTokenType.RefreshToken * 1000);
+        await redisClient.set(`refreshToken:${userId}`, refreshToken, ExpiresInTokenType.RefreshToken);
 
         return {
             access_token: accessToken,
