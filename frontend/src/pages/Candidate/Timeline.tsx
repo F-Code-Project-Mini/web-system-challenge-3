@@ -5,24 +5,44 @@ import Helper from "~/utils/helper";
 const Timeline = () => {
     const timelineData = [
         {
-            startDate: "2025-12-12T08:30:00Z",
-            endDate: "2025-12-12T23:59:59Z",
-            description: "Thời gian các team lên ý tưởng và chuẩn bị.",
+            startDate: "2026-01-05T00:00:00Z",
+            endDate: "2026-01-12T23:59:59Z",
+            description: "Thời gian các bạn lên ý tưởng và chuẩn bị cho challenge.",
         },
         {
-            startDate: "2025-12-17T00:00:00Z",
-            endDate: "2025-12-28T23:59:59Z",
-            description: "Tham gia present thử để nhận xét và cải thiện ý tưởng.",
+            startDate: "2026-01-12T00:00:00Z",
+            endDate: "2026-01-15T23:59:59Z",
+            description: "Mở form đăng ký present thử để các bạn có cơ hội nhận xét từ Ban Giám Khảo.",
         },
         {
-            startDate: "2025-12-29T00:00:00Z",
-            endDate: "2025-12-31T23:59:59Z",
-            description: "Đăng ký ngày tham gia present chính thức và nộp sản phẩm.",
+            startDate: "2026-01-16T00:00:00Z",
+            endDate: "2026-01-16T23:59:59Z",
+            description: "Thông báo thời gian present thử cho các nhóm đã đăng ký trên Discord.",
         },
         {
-            startDate: "2026-01-06T00:00:00Z",
-            endDate: "2026-01-10T23:59:59Z",
-            description: "Ngày present chính thức.",
+            startDate: "2026-01-18T00:00:00Z",
+            endDate: "2026-01-20T23:59:59Z",
+            description: "Thời gian present thử để nhận xét và cải thiện sản phẩm.",
+        },
+        {
+            startDate: "2026-01-21T00:00:00Z",
+            endDate: "2026-01-23T23:59:59Z",
+            description: "Mở form đăng ký present chính thức, chọn thời gian và nộp sản phẩm.",
+        },
+        {
+            startDate: "2026-01-25T00:00:00Z",
+            endDate: "2026-01-25T23:59:59Z",
+            description: "Thông báo phòng và thời gian present chính thức cho các nhóm trên Discord.",
+        },
+        {
+            startDate: "2026-01-26T00:00:00Z",
+            endDate: "2026-01-30T23:59:59Z",
+            description: "Thời gian present chính thức.",
+        },
+        {
+            startDate: "2026-02-02T00:00:00Z",
+            endDate: "2026-02-02T23:59:59Z",
+            description: "Gửi email thông báo kết quả cuối cùng cho các bạn.",
         },
     ];
 
