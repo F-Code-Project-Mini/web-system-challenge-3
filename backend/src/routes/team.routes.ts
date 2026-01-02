@@ -12,7 +12,7 @@ teamRouter.get("/", auth, validate(getAllSchema), teamController.getAll);
 
 teamRouter.get("/:id", auth, validate(idParamSchema), teamController.getDetail);
 
-teamRouter.get("/user/:id", auth, validate(idParamSchema), teamController.getTeamByUserId);
+teamRouter.get("/mentor/:id", auth, validate(idParamSchema), teamController.getTeamByUserId);
 
 teamRouter.post("/", auth, isRole([RoleType.ADMIN]), teamController.create);
 teamRouter.patch("/:id", auth, isRole([RoleType.ADMIN]), validate(idParamSchema), teamController.update);
@@ -28,8 +28,15 @@ teamRouter.patch(
 teamRouter.patch(
     "/:id/set-leader",
     auth,
-    isRole([RoleType.ADMIN]),
+    isRole([RoleType.MENTOR]),
     validate(uuidParamsAndBodySchema),
     teamController.setLeader,
+);
+teamRouter.get(
+    "/get-teams-by-mentor",
+    auth,
+    isRole([RoleType.MENTOR]),
+    // validate(uuidParamsAndBodySchema),
+    teamController.getTeamsByMentor,
 );
 export default teamRouter;
