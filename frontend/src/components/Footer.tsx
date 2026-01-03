@@ -27,7 +27,7 @@ const Footer = () => {
                         <ul className="mt-4 space-y-3">
                             <li>
                                 <a
-                                    href="#"
+                                    href="/"
                                     className="hover:text-primary group flex items-center text-sm text-gray-600 transition-all"
                                 >
                                     <span className="group-hover:bg-primary mr-2 h-1 w-1 rounded-full bg-gray-400 transition-all group-hover:w-2"></span>
@@ -54,11 +54,11 @@ const Footer = () => {
                             </li>
                             <li>
                                 <a
-                                    href="#"
+                                    href="https://discord.gg/WvudrJaYD"
                                     className="hover:text-primary group flex items-center text-sm text-gray-600 transition-all"
                                 >
                                     <span className="group-hover:bg-primary mr-2 h-1 w-1 rounded-full bg-gray-400 transition-all group-hover:w-2"></span>
-                                    Bảng điểm
+                                    Discord
                                 </a>
                             </li>
                         </ul>

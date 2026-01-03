@@ -1,3 +1,4 @@
+import NotifyNotLeader from "~/components/NotifyNotLeader";
 import type { TeamType } from "~/types/team.types";
 
 const Members = ({ data }: { data: TeamType | undefined }) => {
@@ -6,6 +7,12 @@ const Members = ({ data }: { data: TeamType | undefined }) => {
 
     return (
         <section className="col-span-16 xl:col-span-8" id="members">
+            {!leader && data && (
+                <NotifyNotLeader
+                    name={data.name}
+                    message="Vui lòng làm việc với nhau và bầu chọn ra trưởng nhóm và báo cáo lại với mentor!"
+                />
+            )}
             <div className="overflow-hidden rounded-lg border border-gray-200/70 bg-white shadow-xs transition-all">
                 <div className="border-b border-gray-200/70 bg-gradient-to-r from-gray-50/80 to-white px-5 py-4 sm:px-6 sm:py-5">
                     <h2 className="text-base font-semibold tracking-tight text-gray-900 sm:text-lg">
