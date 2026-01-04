@@ -1,7 +1,6 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import AuthApi from "~/api-requests/auth.requests";
 import LocalStorage from "./localstorage";
-console.log(import.meta.env.VITE_API_BACKEND_API);
 
 const options = {
     baseURL: import.meta.env.VITE_API_BACKEND_API,
@@ -11,7 +10,6 @@ const options = {
         "Content-Type": "application/json",
     },
 };
-// console.log(options);
 
 export const publicApi = axios.create(options);
 export const privateApi = axios.create({

@@ -1,4 +1,4 @@
-const mentorList = [
+export const mentorList = [
     {
         fullName: "Phạm Hoàng Tuấn",
         email: "phamhoangtuanqn@gmail.com",
@@ -11,7 +11,7 @@ const mentorList = [
         fullName: "Nguyễn Hoàng Minh",
         email: "nguyenminh150906@gmail.com",
         phone: "0911850906",
-        username: "H'ming",
+        username: "hming4222",
         role: "MENTOR",
         facebook: "https://www.facebook.com/minh.nguyenthien.583/",
     },
@@ -19,7 +19,7 @@ const mentorList = [
         fullName: "Đào Thị Út Trinh",
         email: "uttrinh4115@gmail.com",
         phone: "0901928382",
-        username: "",
+        username: "ckjnn",
         role: "MENTOR",
         facebook: "https://www.facebook.com/ckjnn",
     },
@@ -42,16 +42,16 @@ const mentorList = [
     {
         fullName: "Nguyễn Đức Huy",
         email: "nguyenduchuy23052006@gmail.com",
-        phone: "",
-        username: "",
+        phone: "0399692306",
+        username: "jameshiiii06",
         role: "MENTOR",
         facebook: "https://www.facebook.com/jameshiii06",
     },
     {
         fullName: "Võ Gia Huy",
         email: "huyvog6226@gmail.com",
-        phone: "961002445",
-        username: "Hank",
+        phone: "0961002445",
+        username: "hank_74252",
         role: "MENTOR",
         facebook: "https://www.facebook.com/vo.gia.huy.622929",
     },
