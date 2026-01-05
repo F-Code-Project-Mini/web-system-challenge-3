@@ -37,7 +37,7 @@ const Members = ({ data }: { data: TeamType | undefined }) => {
                                     MSSV
                                 </th>
                                 <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5 md:table-cell">
-                                    Email
+                                    Liên hệ
                                 </th>
                             </tr>
                         </thead>
@@ -60,6 +60,7 @@ const Members = ({ data }: { data: TeamType | undefined }) => {
                                                     </span>
                                                 )}
                                             </div>
+                                            <p className="mt-0.5 text-xs text-gray-600">Ngành: {member.major}</p>
                                         </td>
                                         <td className="px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:table-cell sm:px-6 sm:py-4">
                                             <p className="text-blue-gray-900 text-sm font-semibold">
@@ -68,7 +69,10 @@ const Members = ({ data }: { data: TeamType | undefined }) => {
                                             <p className="text-xs text-gray-500">Kỳ {member.semester}</p>
                                         </td>
                                         <td className="px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:px-6 sm:py-4 md:table-cell">
-                                            {user.email}
+                                            <div className="flex flex-col gap-1">
+                                                <span className="block font-medium">{user.email}</span>
+                                                <span className="block text-gray-500">{member.phone}</span>
+                                            </div>
                                         </td>
                                     </tr>
                                 );
