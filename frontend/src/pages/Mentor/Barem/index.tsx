@@ -7,12 +7,10 @@ import TeamApi from "~/api-requests/team.requests";
 import { useParams } from "react-router";
 import { socket } from "~/utils/socket";
 import useAuth from "~/hooks/useAuth";
-type CellStatus = "idle" | "saving" | "saved" | "error";
 const MentorBaremPage = () => {
     const params = useParams();
     const { user } = useAuth();
     const [scores, setScores] = useState<{ [key: string]: number }>({});
-    const [cellStatus, setCellStatus] = useState<Record<string, CellStatus>>({});
 
     const debounceMapRef = useRef<Record<string, number>>({});
 
@@ -62,7 +60,6 @@ const MentorBaremPage = () => {
 
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setScores(newScores);
-        setCellStatus({});
     }, [baremMentor]);
 
     const totalMaxScore =
@@ -85,11 +82,6 @@ const MentorBaremPage = () => {
         setScores((prev) => ({
             ...prev,
             [key]: isNaN(num) ? 0 : num,
-        }));
-
-        setCellStatus((prev) => ({
-            ...prev,
-            [key]: "saving",
         }));
     };
 
@@ -126,39 +118,6 @@ const MentorBaremPage = () => {
             }, 500);
         });
     }, [scores, baremMentor, selectedCandidate, user.id]);
-
-    useEffect(() => {
-        const onSaved = (payload: { codeBarem: string }) => {
-            const key = payload.codeBarem;
-
-            setCellStatus((prev) => ({
-                ...prev,
-                [key]: "saved",
-            }));
-
-            window.setTimeout(() => {
-                setCellStatus((prev) => ({
-                    ...prev,
-                    [key]: "idle",
-                }));
-            }, 1500);
-        };
-
-        const onError = (payload: { codeBarem: string }) => {
-            setCellStatus((prev) => ({
-                ...prev,
-                [payload.codeBarem]: "error",
-            }));
-        };
-
-        socket.on("SCORE_SAVED", onSaved);
-        socket.on("SAVE_SCORE_ERROR", onError);
-
-        return () => {
-            socket.off("SCORE_SAVED", onSaved);
-            socket.off("SAVE_SCORE_ERROR", onError);
-        };
-    }, []);
 
     return (
         <section className="px-4 sm:px-0">
@@ -296,68 +255,6 @@ const MentorBaremPage = () => {
                                                                 / {subPart.maxScore}
                                                             </span>
                                                         </div>
-                                                        {/* <div className="mt-1 flex min-h-[20px] items-center justify-center gap-1 text-xs italic">
-                                                            {cellStatus[subPart.code] === "saving" && (
-                                                                <>
-                                                                    <svg
-                                                                        className="h-4 w-4 animate-spin text-blue-500"
-                                                                        fill="none"
-                                                                        viewBox="0 0 24 24"
-                                                                    >
-                                                                        <circle
-                                                                            className="opacity-25"
-                                                                            cx="12"
-                                                                            cy="12"
-                                                                            r="10"
-                                                                            stroke="currentColor"
-                                                                            strokeWidth="4"
-                                                                        ></circle>
-                                                                        <path
-                                                                            className="opacity-75"
-                                                                            fill="currentColor"
-                                                                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                                                                        ></path>
-                                                                    </svg>
-                                                                    <span className="text-blue-600">Đang lưu...</span>
-                                                                </>
-                                                            )}
-                                                            {cellStatus[subPart.code] === "saved" && (
-                                                                <>
-                                                                    <svg
-                                                                        className="h-4 w-4 text-green-500"
-                                                                        fill="none"
-                                                                        viewBox="0 0 24 24"
-                                                                        stroke="currentColor"
-                                                                        strokeWidth="2"
-                                                                    >
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            d="M5 13l4 4L19 7"
-                                                                        />
-                                                                    </svg>
-                                                                    <span className="text-green-600">Đã lưu</span>
-                                                                </>
-                                                            )}
-                                                            {cellStatus[subPart.code] === "error" && (
-                                                                <>
-                                                                    <svg
-                                                                        className="h-4 w-4 text-red-500"
-                                                                        fill="none"
-                                                                        viewBox="0 0 24 24"
-                                                                        stroke="currentColor"
-                                                                        strokeWidth="2"
-                                                                    >
-                                                                        <path
-                                                                            strokeLinecap="round"
-                                                                            strokeLinejoin="round"
-                                                                            d="M6 18L18 6M6 6l12 12"
-                                                                        />
-                                                                    </svg>
-                                                                    <span className="text-red-600">Lỗi lưu</span>
-                                                                </>
-                                                            )}
-                                                        </div> */}
                                                     </td>
 
                                                     <td className="cursor-pointer px-4 py-3 text-center">
