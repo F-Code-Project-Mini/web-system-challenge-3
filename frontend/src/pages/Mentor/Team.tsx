@@ -109,14 +109,21 @@ const Team = ({ team }: { team: TeamType }) => {
                                                     </span>
                                                     <span className="text-gray-500">/100</span>
                                                 </div>
-                                                <Button variant="outline" size="sm" className="w-fit text-xs">
-                                                    <Link
-                                                        to={`/mentor/team/${team.id}/candidate/${member.id}`}
-                                                        className="flex items-center gap-1"
+                                                {user.isConfirm && (
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="w-fit text-xs"
+                                                        asChild
                                                     >
-                                                        <Sparkles size={10} /> <span>Đánh giá</span>
-                                                    </Link>
-                                                </Button>
+                                                        <Link
+                                                            to={`/mentor/team/${team.id}/candidate/${member.id}`}
+                                                            className="flex items-center gap-1"
+                                                        >
+                                                            <Sparkles size={10} /> <span>Đánh giá</span>
+                                                        </Link>
+                                                    </Button>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>
