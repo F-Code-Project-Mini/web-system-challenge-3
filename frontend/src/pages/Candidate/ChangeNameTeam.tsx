@@ -60,8 +60,7 @@ export function ChangeNameTeam({ team }: { team: TeamType }) {
                         onChange={(e) => setNewName(e.target.value)}
                     />
                     <span className="text-sm text-red-500 italic">
-                        Lưu ý cần cẩn thận khi bấm xác nhận, bạn không thể đặt lại tên nhóm nữa! Hãy kiểm tra thật kỹ để
-                        tránh bị trùng tên với nhóm khác!
+                        Lưu ý cần cẩn thận khi bấm xác nhận, bạn không thể đặt lại tên nhóm nữa!
                     </span>
                     <div className="mt-4 space-y-2">
                         <p className="text-sm font-medium text-gray-700">Gợi ý tên nhóm:</p>

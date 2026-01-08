@@ -4,17 +4,30 @@ import userRespository from "./user.repository";
 import { RoleType } from "~/constants/enums";
 
 class TeamRepository {
-    findWithPagination = async ({ page, limit, mentorId }: { page?: number; limit?: number; mentorId?: string }) => {
+    findWithPagination = async () => {
         const includeUser = {
             omit: {
                 password: true,
                 candidateId: true,
+                email: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true,
             },
         };
         const include = {
             candidates: {
                 include: {
                     user: includeUser,
+                },
+                omit: {
+                    phone: true,
+                    // major: true,
+                    semester: true,
+                    mentorNote: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    teamId: true,
                 },
             },
             mentorship: {
@@ -32,14 +45,24 @@ class TeamRepository {
             topic: true,
         };
 
-        const { data, meta } = await paginate<any>(prisma.team, {
-            page,
-            limit,
-            orderBy: { id: "desc" },
+        // const { data, meta } = await paginate<any>(prisma.team, {
+        //     page,
+        //     limit,
+        //     orderBy: { id: "desc" },
+        //     include,
+        //     omit: {
+        //         mentorNote: true,
+        //     },
+        // });
+        const data = prisma.team.findMany({
+            orderBy: { group: "asc" },
             include,
+            omit: {
+                mentorNote: true,
+            },
         });
 
-        return { teams: data, meta };
+        return data;
     };
 
     findByIdWithMembers = async (id: string, displayScore: boolean = false, role: RoleType) => {
