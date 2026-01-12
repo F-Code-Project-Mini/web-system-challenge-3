@@ -1,4 +1,10 @@
-import type { ResponseDetailData, SchedulePresentType, TeamType } from "~/types/team.types";
+import type {
+    OfficialScheduleDateType,
+    ResponseDetailData,
+    ScheduleDateType,
+    SchedulePresentType,
+    TeamType,
+} from "~/types/team.types";
 import { privateApi } from "~/utils/axiosInstance";
 
 class TeamApi {
@@ -40,9 +46,17 @@ class TeamApi {
         const res = await privateApi.post(`/teams/present`, { teamId, trialDate, officialDate });
         return res.data;
     }
-
-    static async getSchedulePresentation(teamId: string) {
-        const res = await privateApi.get<ResponseDetailData<SchedulePresentType>>(`/teams/present/${teamId}`);
+    static async getSchedulePresentationAll() {
+        const res = await privateApi.get<
+            ResponseDetailData<{
+                trialSchedules: ScheduleDateType[];
+                officialSchedules: OfficialScheduleDateType[];
+            }>
+        >(`/teams/get-schedule-all`);
+        return res.data;
+    }
+    static async getSchedulePresentationInTeam(teamId: string) {
+        const res = await privateApi.get<ResponseDetailData<SchedulePresentType>>(`/teams/get-schedule/${teamId}`);
         return res.data;
     }
 }
