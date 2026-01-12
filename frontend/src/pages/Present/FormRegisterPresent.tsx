@@ -1,15 +1,21 @@
 import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Calendar, Clock, Send } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Label } from "~/components/ui/label";
 
+import TeamApi from "~/api-requests/team.requests";
+import Notification from "~/utils/notification";
+import { useAppSelector } from "~/hooks/useRedux";
+import type { AxiosError } from "axios";
+import ConfirmRegister from "./ConfirmRegister";
+
 interface TimeSlots {
     [date: string]: string[];
 }
 
-// Thời gian thuyết trình thử - mỗi ngày 4 slot
 const trialTimeSlots: TimeSlots = {
     "17/01/2026": ["7:00 - 7:45", "8:00 - 8:45", "9:00 - 9:45", "10:00 - 10:45"],
     "18/01/2026": ["7:00 - 7:45", "8:00 - 8:45", "9:00 - 9:45", "10:00 - 10:45"],
@@ -17,7 +23,6 @@ const trialTimeSlots: TimeSlots = {
     "20/01/2026": ["7:00 - 7:45", "8:00 - 8:45", "9:00 - 9:45", "10:00 - 10:45"],
 };
 
-// Thời gian thuyết trình chính thức - mỗi ngày 2 slot
 const officialTimeSlots: TimeSlots = {
     "17/01/2026": ["13:00 - 13:45", "14:00 - 14:45"],
     "18/01/2026": ["13:00 - 13:45", "14:00 - 14:45"],
@@ -26,8 +31,30 @@ const officialTimeSlots: TimeSlots = {
 };
 
 const FormRegisterPresent = () => {
+    const userInfo = useAppSelector((state) => state.user.userInfo);
+    const teamId = userInfo.candidate?.teamId || "";
+
     const [trialSlot, setTrialSlot] = useState<string>("");
     const [officialSlots, setOfficialSlots] = useState<string[]>([]);
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+    const registerMutation = useMutation({
+        mutationFn: (data: { teamId: string; trialDate: string; officialDate: string[] }) =>
+            TeamApi.createSchedulePresentation(data),
+        onError: (error: AxiosError<{ message?: string }>) => {
+            console.log(error);
+            Notification.error({
+                text: error.response?.data?.message || "Đăng ký thời gian thuyết trình thất bại!",
+            });
+        },
+        onSuccess: () => {
+            Notification.success({
+                text: "Đăng ký thời gian thuyết trình thành công!",
+            });
+            setTrialSlot("");
+            setOfficialSlots([]);
+        },
+    });
 
     const handleOfficialSlotChange = (slot: string) => {
         setOfficialSlots((prev) => {
@@ -40,11 +67,16 @@ const FormRegisterPresent = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log({
-            trialSlot,
-            officialSlots,
+        setShowConfirmDialog(true);
+    };
+
+    const handleConfirmSubmit = () => {
+        registerMutation.mutate({
+            teamId,
+            trialDate: trialSlot || "",
+            officialDate: officialSlots,
         });
-        // TODO: Implement API call
+        setShowConfirmDialog(false);
     };
 
     return (
@@ -70,8 +102,15 @@ const FormRegisterPresent = () => {
                     </div>
                     <p className="text-sm text-gray-600">
                         Chọn <span className="font-semibold">MỘT</span> khung giờ để thuyết trình thử nghiệm và nhận
-                        phản hồi
+                        phản hồi từ mentor.
                     </p>
+                    <div className="rounded-md border-l-4 border-blue-400 bg-blue-50 p-3">
+                        <p className="text-xs text-blue-800">
+                            <span className="font-semibold">Lưu ý:</span> Chỉ có{" "}
+                            <span className="font-bold">10 slot</span> thuyết trình thử cho toàn bộ các nhóm. Mỗi nhóm
+                            chỉ được chọn 1 khung giờ tham gia.
+                        </p>
+                    </div>
 
                     <RadioGroup value={trialSlot} onValueChange={setTrialSlot}>
                         {Object.entries(trialTimeSlots).map(([date, slots]) => (
@@ -104,7 +143,6 @@ const FormRegisterPresent = () => {
 
                 <div className="border-t border-gray-200"></div>
 
-                {/* Official Presentation */}
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <Clock className="h-5 w-5 text-green-600" />
@@ -117,6 +155,13 @@ const FormRegisterPresent = () => {
                         Chọn <span className="font-semibold text-green-700">NHIỀU</span> khung giờ bạn có thể tham gia
                         thuyết trình chính thức
                     </p>
+                    <div className="rounded-md border-l-4 border-green-400 bg-green-50 p-3">
+                        <p className="text-xs text-green-800">
+                            <span className="font-semibold">Lưu ý:</span> Tất cả các nhóm đều được quyền tham gia thuyết
+                            trình chính thức. Vui lòng chọn <span className="font-bold">TẤT CẢ</span> các khung giờ mà{" "}
+                            <span className="font-bold">TẤT CẢ</span> thành viên trong nhóm có thể tham gia được.
+                        </p>
+                    </div>
 
                     <div className="space-y-4">
                         {Object.entries(officialTimeSlots).map(([date, slots]) => (
@@ -147,15 +192,14 @@ const FormRegisterPresent = () => {
                     </div>
                 </div>
 
-                {/* Submit Button */}
                 <div className="flex items-center gap-3 border-t border-gray-200/70 pt-5">
                     <Button
                         type="submit"
                         className="group flex items-center gap-2 transition-all hover:shadow-md"
-                        disabled={officialSlots.length === 0}
+                        disabled={officialSlots.length === 0 || registerMutation.isPending}
                     >
                         <Send className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                        Đăng ký
+                        {registerMutation.isPending ? "Đang đăng ký..." : "Đăng ký"}
                     </Button>
                     <p className="text-xs text-gray-500">
                         <span className="font-semibold text-red-600">Lưu ý:</span> Bạn phải chọn ít nhất 1 khung giờ cho
@@ -163,6 +207,14 @@ const FormRegisterPresent = () => {
                     </p>
                 </div>
             </form>
+
+            <ConfirmRegister
+                handleConfirmSubmit={handleConfirmSubmit}
+                showConfirmDialog={showConfirmDialog}
+                setShowConfirmDialog={setShowConfirmDialog}
+                trialSlot={trialSlot}
+                officialSlots={officialSlots}
+            />
         </section>
     );
 };

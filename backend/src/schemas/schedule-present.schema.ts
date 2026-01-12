@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-interface PresentType {
+interface SchedulePresentType {
     id?: string;
     teamId: string;
     trialDate: string;
@@ -9,14 +9,14 @@ interface PresentType {
     updatedAt?: Date;
 }
 
-class Present {
+class SchedulePresent {
     id: string;
     teamId: string;
     trialDate: string;
     officialDate: string[];
     createdAt: Date;
     updatedAt: Date;
-    constructor(present: PresentType) {
+    constructor(present: SchedulePresentType) {
         this.id = present.id || uuidv4();
         this.teamId = present.teamId;
         this.trialDate = present.trialDate;
@@ -26,4 +26,4 @@ class Present {
     }
 }
 
-export default Present;
+export default SchedulePresent;
