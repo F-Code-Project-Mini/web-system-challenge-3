@@ -51,7 +51,7 @@ model Candidate {
 model Team {
   id           String  @id @default(uuid()) @db.VarChar(36)
   group        Int     @unique @db.Int
-  name         String?  @unique  @db.VarChar(255)
+  name         String? @unique @db.VarChar(255)
   mentorshipId String  @map("mentorship_id") @db.VarChar(36)
   leaderId     String? @unique @map("leader_id") @db.VarChar(36)
   topicId      String  @map("topic_id") @db.VarChar(36)
@@ -63,6 +63,7 @@ model Team {
   candidates  Candidate[]  @relation("CandidateToTeam")
   submissions Submission[]
   reports     Report[]
+  presents    Present[]
 
   @@map("teams")
 }
@@ -172,23 +173,17 @@ model BaremScore {
   @@map("scores")
 }
 
-// tạo 1 bảng lưu lại thông tin đăng ký thời gian present của ứng viên bao gồm
-// id
-// team_id - quan hệ với team
-// thời gian present thử  - json
-// thời gian present thật -  json
-
-// created_at
-// updated_at
-
 model Present {
-  id                 String   @id @default(uuid()) @db.VarChar(36)
-  teamId             String   @map("team_id") @db.VarChar(36)
-  tentativeSchedule  String   @map("tentative_schedule") @db.Json
-  finalSchedule      String   @map("final_schedule") @db.Json
-  createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
+  id     String @id @default(uuid()) @db.VarChar(36)
+  teamId String @map("team_id") @db.VarChar(36)
 
+  tentativeSchedule Json @map("tentative_schedule") @db.Json
+  finalSchedule     Json @map("final_schedule") @db.Json
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Quan hệ với model Team
   team Team @relation(fields: [teamId], references: [id])
 
   @@map("presents")
