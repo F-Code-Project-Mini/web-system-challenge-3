@@ -32,6 +32,7 @@ export const createSchedulePresentation = async (
 ) => {
     const userId = req.userId!;
     const { teamId, trialDate, officialDate } = req.body;
+    console.log("teamId, trialDate, officialDate", teamId, trialDate, officialDate);
     try {
         const result = await teamService.createSchedulePresentation({
             userId,
@@ -42,6 +43,23 @@ export const createSchedulePresentation = async (
         return res
             .status(HTTP_STATUS.CREATED)
             .json(new ResponseClient({ message: "Tạo lịch trình thuyết trình thành công!", result }));
+    } catch (error) {
+        return next(error);
+    }
+};
+
+export const getSchedulePresentation = async (
+    req: Request<ParamsDictionary, {}, { teamId: string }>,
+    res: Response,
+    next: NextFunction,
+) => {
+    try {
+        const userId = req.userId!;
+        const { teamId } = req.params;
+        console.log("teamId", userId, teamId);
+        // chỉ có thành viên mới get dc
+        const result = await teamService.getSchedulePresentation(userId, teamId);
+        return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
     } catch (error) {
         return next(error);
     }

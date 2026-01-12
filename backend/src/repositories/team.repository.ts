@@ -2,7 +2,8 @@ import prisma from "~/configs/prisma";
 import { paginate } from "~/utils/pagination";
 import userRespository from "./user.repository";
 import { RoleType } from "~/constants/enums";
-import Present from "~/schemas/present.schema";
+import Present from "~/schemas/schedule-present.schema";
+import SchedulePresent from "~/schemas/schedule-present.schema";
 
 class TeamRepository {
     findWithPagination = async () => {
@@ -229,8 +230,20 @@ class TeamRepository {
         return !!team;
     };
 
+    isMember = async (teamId: string, userId: string) => {
+        const team = await prisma.user.findUnique({
+            where: {
+                id: userId,
+                candidate: {
+                    teamId: teamId,
+                },
+            },
+        });
+        return !!team;
+    };
+
     isTrialDateExists = async (trialDate: string) => {
-        const team = await prisma.present.findFirst({
+        const team = await prisma.schedulePresent.findFirst({
             where: {
                 trialDate,
             },
@@ -239,12 +252,20 @@ class TeamRepository {
     };
 
     createPresentationSchedule = async (data: { teamId: string; trialDate: string; officialDate: string[] }) => {
-        return prisma.present.create({
-            data: new Present({
+        return prisma.schedulePresent.create({
+            data: new SchedulePresent({
                 teamId: data.teamId,
                 trialDate: data.trialDate,
                 officialDate: data.officialDate,
             }),
+        });
+    };
+
+    findSchedulePresentationByTeamId = async (teamId: string) => {
+        return prisma.schedulePresent.findFirst({
+            where: {
+                teamId,
+            },
         });
     };
 }

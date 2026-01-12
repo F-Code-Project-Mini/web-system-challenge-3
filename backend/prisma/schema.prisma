@@ -57,13 +57,13 @@ model Team {
   topicId      String  @map("topic_id") @db.VarChar(36)
   mentorNote   String? @map("mentor_note") @db.Text
 
-  mentorship  Mentorship   @relation("MentorshipToTeam", fields: [mentorshipId], references: [id])
-  leader      Candidate?   @relation("TeamLeader", fields: [leaderId], references: [id])
-  topic       Topic        @relation(fields: [topicId], references: [id])
-  candidates  Candidate[]  @relation("CandidateToTeam")
-  submissions Submission[]
-  reports     Report[]
-  presents    Present[]
+  mentorship       Mentorship        @relation("MentorshipToTeam", fields: [mentorshipId], references: [id])
+  leader           Candidate?        @relation("TeamLeader", fields: [leaderId], references: [id])
+  topic            Topic             @relation(fields: [topicId], references: [id])
+  candidates       Candidate[]       @relation("CandidateToTeam")
+  submissions      Submission[]
+  reports          Report[]
+  schedulePresents SchedulePresent[]
 
   @@map("teams")
 }
@@ -173,20 +173,20 @@ model BaremScore {
   @@map("scores")
 }
 
-model Present {
+model SchedulePresent {
   id     String @id @default(uuid()) @db.VarChar(36)
   teamId String @map("team_id") @db.VarChar(36)
 
-  trialDate    String @unique @map("trial_date") @db.VarChar(255)
-  officialDate Json   @map("offical_date") @db.Json
+  trialDate    String  @unique @map("trial_date") @db.VarChar(255)
+  officialDate Json    @map("offical_date") @db.Json
+  finalDate    String? @unique @map("final_date") @db.VarChar(255)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  // Quan hệ với model Team
   team Team @relation(fields: [teamId], references: [id])
 
-  @@map("presents")
+  @@map("schedule_presents")
 }
 
 enum Role {
