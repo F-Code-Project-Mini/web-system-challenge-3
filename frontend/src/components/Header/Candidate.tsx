@@ -1,13 +1,28 @@
+import Helper from "~/utils/helper";
 import { NavLink } from "./NavLink";
-import { ServerCrash } from "lucide-react";
+import { Presentation, Send } from "lucide-react";
+import { useLocation } from "react-router";
 
 const CandidateHeader = () => {
-    // const location = useLocation();
+    const location = useLocation();
     return (
         <>
-            <li>
-                <NavLink url="https://discord.gg/WvudrJaYD" name="Hỗ trợ" Icon={ServerCrash} target="_blank" />
+            <li id="presents">
+                <NavLink
+                    url="/presents"
+                    name="Đăng ký thuyết trình"
+                    Icon={Presentation}
+                    active={Helper.isActive(location.pathname, "/presents")}
+                />
             </li>
+            {/* <li id="submissions">
+                <NavLink
+                    url="/submissions"
+                    name="Nộp sản phẩm"
+                    Icon={Send}
+                    active={Helper.isActive(location.pathname, "/submissions")}
+                />
+            </li> */}
         </>
     );
 };

@@ -51,7 +51,7 @@ model Candidate {
 model Team {
   id           String  @id @default(uuid()) @db.VarChar(36)
   group        Int     @unique @db.Int
-  name         String?  @unique  @db.VarChar(255)
+  name         String? @unique @db.VarChar(255)
   mentorshipId String  @map("mentorship_id") @db.VarChar(36)
   leaderId     String? @unique @map("leader_id") @db.VarChar(36)
   topicId      String  @map("topic_id") @db.VarChar(36)
@@ -63,6 +63,7 @@ model Team {
   candidates  Candidate[]  @relation("CandidateToTeam")
   submissions Submission[]
   reports     Report[]
+  presents    Present[]
 
   @@map("teams")
 }
@@ -170,6 +171,22 @@ model BaremScore {
   @@unique([mentorId, codeBarem, candidateId])
   @@index([candidateId])
   @@map("scores")
+}
+
+model Present {
+  id     String @id @default(uuid()) @db.VarChar(36)
+  teamId String @map("team_id") @db.VarChar(36)
+
+  trialDate    String @unique @map("trial_date") @db.VarChar(255)
+  officialDate Json   @map("offical_date") @db.Json
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Quan hệ với model Team
+  team Team @relation(fields: [teamId], references: [id])
+
+  @@map("presents")
 }
 
 enum Role {
