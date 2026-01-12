@@ -7,22 +7,22 @@ const CandidateHeader = () => {
     const location = useLocation();
     return (
         <>
-            <li id="submissions">
+            <li id="presents">
                 <NavLink
-                    url="/submissions"
+                    url="/presents"
                     name="Đăng ký thuyết trình"
                     Icon={Presentation}
-                    active={Helper.isActive(location.pathname, "/submissions")}
+                    active={Helper.isActive(location.pathname, "/presents")}
                 />
             </li>
-            <li id="submissions">
+            {/* <li id="submissions">
                 <NavLink
                     url="/submissions"
                     name="Nộp sản phẩm"
                     Icon={Send}
                     active={Helper.isActive(location.pathname, "/submissions")}
                 />
-            </li>
+            </li> */}
         </>
     );
 };
