@@ -250,6 +250,53 @@ class TeamService {
             officialSchedules: availableOfficialSchedules,
         };
     }
+
+    getSubmissionInTeam = async (userId: string, teamId: string) => {
+        const isMember = await teamRepository.isMember(teamId, userId);
+        if (!isMember) {
+            throw new ErrorWithStatus({
+                status: HTTP_STATUS.FORBIDDEN,
+                message: "Bạn không có quyền xem submission của nhóm này.",
+            });
+        }
+        const submission = await teamRepository.findSubmissionByTeamId(teamId);
+        if (!submission) {
+            throw new ErrorWithStatus({
+                status: HTTP_STATUS.NOT_FOUND,
+                message: "Submission của nhóm không tồn tại.",
+            });
+        }
+        return submission;
+    };
+
+    createSubmission = async ({
+        userId,
+        teamId,
+        presentationLink,
+        productLink,
+        note,
+    }: {
+        userId: string;
+        teamId: string;
+        presentationLink: string;
+        productLink: string;
+        note: string;
+    }) => {
+        const isMember = await teamRepository.isMember(teamId, userId);
+        if (!isMember) {
+            throw new ErrorWithStatus({
+                status: HTTP_STATUS.FORBIDDEN,
+                message: "Bạn không có quyền tạo submission cho nhóm này.",
+            });
+        }
+        const created = await teamRepository.createSubmission(userId, {
+            teamId,
+            presentationLink,
+            productLink,
+            note,
+        });
+        return created;
+    };
 }
 
 const teamService = new TeamService();
