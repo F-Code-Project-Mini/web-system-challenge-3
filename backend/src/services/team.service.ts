@@ -271,7 +271,7 @@ class TeamService {
                 message: "Bạn không có quyền tạo submission cho nhóm này.",
             });
         }
-        const created = await teamRepository.createSubmission({
+        const created = await teamRepository.createSubmission(userId, {
             teamId,
             presentationLink,
             productLink,

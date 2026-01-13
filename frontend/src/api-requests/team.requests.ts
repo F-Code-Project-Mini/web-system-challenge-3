@@ -59,5 +59,10 @@ class TeamApi {
         const res = await privateApi.get<ResponseDetailData<SchedulePresentType>>(`/teams/get-schedule/${teamId}`);
         return res.data;
     }
+
+    static async submissions(teamId: string) {
+        const res = await privateApi.get<ResponseDetailData<{ submissionUrl: string }>>(`/teams/${teamId}/submissions`);
+        return res.data;
+    }
 }
 export default TeamApi;

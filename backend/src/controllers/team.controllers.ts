@@ -67,7 +67,8 @@ export const createSubmission = async (
 ) => {
     try {
         const userId = req.userId!;
-        const { teamId, presentationLink, productLink, note } = req.body;
+        const { presentationLink, productLink, note } = req.body;
+        const { teamId } = req.params;
         console.log("teamId, presentationLink, productLink, note", teamId, presentationLink, productLink, note);
         const result = await teamService.createSubmission({
             userId,
@@ -78,7 +79,7 @@ export const createSubmission = async (
         });
         return res
             .status(HTTP_STATUS.CREATED)
-            .json(new ResponseClient({ message: "Tạo submission thành công!", result }));
+            .json(new ResponseClient({ message: "Đã gửi yêu cầu nộp sản phẩm thành công!", result }));
     } catch (error) {
         return next(error);
     }

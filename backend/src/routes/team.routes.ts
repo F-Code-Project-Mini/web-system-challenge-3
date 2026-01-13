@@ -16,7 +16,7 @@ const teamRouter = Router();
 teamRouter.get("/", auth, validate(getAllSchema), teamController.getAll);
 teamRouter.post("/present", auth, teamController.createSchedulePresentation);
 
-teamRouter.post("/submissions", auth, teamController.createSubmission);
+teamRouter.post("/:teamId/submissions", auth, teamController.createSubmission);
 
 // get các lịch đã có thể đăng ký
 teamRouter.get("/get-schedule-all", auth, teamController.getSchedulePresentation);
