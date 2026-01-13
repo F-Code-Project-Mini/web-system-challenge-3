@@ -4,6 +4,8 @@ import userRespository from "./user.repository";
 import { RoleType } from "~/constants/enums";
 import Present from "~/schemas/schedule-present.schema";
 import SchedulePresent from "~/schemas/schedule-present.schema";
+import Submission from "~/schemas/submission.schema";
+import { SubmissionType } from "~/rules/requests/team.request";
 
 class TeamRepository {
     findWithPagination = async () => {
@@ -271,6 +273,24 @@ class TeamRepository {
 
     findAllPresentationSchedules = async () => {
         return prisma.schedulePresent.findMany();
+    };
+    findSubmissionByTeamId = async (teamId: string) => {
+        return prisma.submission.findMany({
+            where: {
+                teamId,
+            },
+        });
+    };
+    createSubmission = async (userId: string, data: SubmissionType) => {
+        return prisma.submission.create({
+            data: new Submission({
+                teamId: data.teamId,
+                userId,
+                presentationLink: data.presentationLink,
+                productLink: data.productLink,
+                note: data.note,
+            }),
+        });
     };
 }
 
