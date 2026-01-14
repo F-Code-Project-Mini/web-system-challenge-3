@@ -101,15 +101,13 @@ export type SubmissionType = {
     note: string;
 };
 
-export type SubmissionRepositoryType = {
+export type SubmissionResponseType = {
     id: string;
     teamId: string;
     userId: string;
-    slideLink?: string;
-    taskAssignmentLink?: string;
-    productLinks?: string[];
-    presentationLink: string;
-    productLink: string;
+    slideLink: string;
+    taskAssignmentLink: string;
+    productLinks: string[];
     note: string;
     submittedAt: string;
 };

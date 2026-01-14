@@ -59,7 +59,7 @@ const FormSubmit = () => {
         e.preventDefault();
 
         const filledLinks = productLinks.filter((link) => link.trim() !== "");
-        
+
         submitMutation.mutate({
             slideLink,
             taskAssignmentLink,
