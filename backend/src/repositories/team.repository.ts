@@ -69,6 +69,7 @@ class TeamRepository {
                         finalDate: true,
                         createdAt: true,
                         updatedAt: true,
+                        googleMeetLink: true,
                     },
                 },
             },

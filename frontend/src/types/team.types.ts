@@ -78,6 +78,7 @@ export type SchedulePresentType = {
     trialDate: string;
     officialDate: string[];
     finalDate: string;
+    googleMeetLink: string;
     createdAt: string;
     updatedAt: string;
 };
