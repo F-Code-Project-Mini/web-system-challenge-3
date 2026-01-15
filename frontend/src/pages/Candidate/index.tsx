@@ -31,7 +31,7 @@ const HomePage = () => {
                 <Notification2 />
                 <Notification />
             </section>
-            <section className="mt-4">
+            <section className="mt-2">
                 <PresentPage />
             </section>
             <section className="mt-8">
