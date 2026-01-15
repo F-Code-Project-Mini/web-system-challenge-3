@@ -33,7 +33,7 @@ const InfoPresent = ({ schedule }: { schedule: SchedulePresent }) => {
                     <div className="flex flex-col items-center rounded-lg bg-amber-50/50 p-2 text-center">
                         <BookOpen className="mb-1 h-3.5 w-3.5 text-amber-600" />
                         <p className="text-xs font-medium text-gray-500">Nơi</p>
-                        <p className="mt-0.5 text-xs font-bold text-gray-900">Meet</p>
+                        <p className="mt-0.5 text-xs font-bold text-gray-900">Google Meet</p>
                     </div>
                 </div>
             </div>
@@ -64,18 +64,14 @@ const InfoPresent = ({ schedule }: { schedule: SchedulePresent }) => {
                         </div>
                         <div className="flex flex-col items-center rounded-lg bg-teal-50/50 p-2 text-center">
                             <CheckCircle className="mb-1 h-3.5 w-3.5 text-teal-600" />
-                            <p className="text-xs font-medium text-gray-500">Trạng thái</p>
-                            <p className="mt-0.5 text-xs font-bold text-teal-700">Đã xác nhận</p>
+                            <p className="text-xs font-medium text-gray-500">Nơi</p>
+                            <p className="mt-0.5 text-xs font-bold text-teal-700">...</p>
                         </div>
                     </div>
                 ) : (
                     <div className="px-4 py-3">
-                        <div className="rounded-lg border border-dashed border-amber-300 bg-amber-50/30 p-3 text-center">
-                            <p className="text-xs font-medium text-amber-700">
-                                {schedule.officialDate && schedule.officialDate.length > 0
-                                    ? "Đang chờ BTC sắp xếp lịch"
-                                    : "Chưa công bố"}
-                            </p>
+                        <div className="rounded-lg text-center">
+                            <p className="text-xs font-medium text-amber-700">Đang chờ BTC sắp xếp lịch</p>
                         </div>
                     </div>
                 )}
