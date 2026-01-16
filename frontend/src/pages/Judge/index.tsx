@@ -75,12 +75,26 @@ const JudgePage = () => {
                                             <td className="hidden px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:table-cell sm:px-6 sm:py-4">
                                                 {room.team ? (
                                                     <>
-                                                        <span className="font-semibold">{room.team.group}</span>
+                                                        {/* <span className="font-semibold">{room.team.group}</span>
                                                         {room.team.name && (
                                                             <p className="mt-0.5 text-xs text-gray-500">
                                                                 {room.team.name}
                                                             </p>
-                                                        )}
+                                                        )} */}
+                                                        <h2 className="text-base font-semibold tracking-tight text-gray-900">
+                                                            [NHÓM{" "}
+                                                            <span className="text-primary font-bold">
+                                                                {room.team.group}
+                                                            </span>
+                                                            ] -{" "}
+                                                            {room.team.name ? (
+                                                                <span className="text-primary font-bold">
+                                                                    {room.team.name}
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-red-500">Chưa đặt tên nhóm</span>
+                                                            )}
+                                                        </h2>
                                                     </>
                                                 ) : (
                                                     "Chưa có nhóm"
