@@ -77,7 +77,7 @@ class JudgeRepository {
                         },
                         submissions: {
                             orderBy: {
-                                submittedAt: 'desc',
+                                submittedAt: "desc",
                             },
                             take: 1,
                             include: {

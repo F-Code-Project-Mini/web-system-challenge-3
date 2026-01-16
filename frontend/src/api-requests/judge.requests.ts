@@ -16,7 +16,22 @@ export type RoomType = {
         topic: {
             title: string;
         };
+        schedulePresent: {
+            googleMeetLink: string;
+        } | null;
     } | null;
+};
+
+export type SubmissionType = {
+    id: string;
+    slideLink: string;
+    taskAssignmentLink: string;
+    productLinks: string[];
+    note: string | null;
+    submittedAt: string;
+    user: {
+        fullName: string;
+    };
 };
 
 export type TeamDetailType = {
@@ -43,6 +58,7 @@ export type TeamDetailType = {
     leader: {
         id: string;
     } | null;
+    submissions: SubmissionType[];
 };
 
 class JudgeApi {
@@ -53,6 +69,11 @@ class JudgeApi {
 
     static async getTeamsByRoom(roomId: string) {
         const res = await privateApi.get<ResponseDetailData<TeamDetailType>>(`/judge/rooms/${roomId}/teams`);
+        return res.data;
+    }
+
+    static async getBarem(candidateId: string) {
+        const res = await privateApi.get<ResponseDetailData<any>>(`/judge/barem/${candidateId}`);
         return res.data;
     }
 }

@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Sparkles, Video } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import WelcomePartition from "~/components/WelcomePartition";
@@ -55,6 +55,9 @@ const JudgePage = () => {
                                         Bắt đầu
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                                        Google Meet
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
                                         Thao tác
                                     </th>
                                 </tr>
@@ -75,26 +78,12 @@ const JudgePage = () => {
                                             <td className="hidden px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:table-cell sm:px-6 sm:py-4">
                                                 {room.team ? (
                                                     <>
-                                                        {/* <span className="font-semibold">{room.team.group}</span>
+                                                        <span className="font-semibold">{room.team.group}</span>
                                                         {room.team.name && (
                                                             <p className="mt-0.5 text-xs text-gray-500">
                                                                 {room.team.name}
                                                             </p>
-                                                        )} */}
-                                                        <h2 className="text-base font-semibold tracking-tight text-gray-900">
-                                                            [NHÓM{" "}
-                                                            <span className="text-primary font-bold">
-                                                                {room.team.group}
-                                                            </span>
-                                                            ] -{" "}
-                                                            {room.team.name ? (
-                                                                <span className="text-primary font-bold">
-                                                                    {room.team.name}
-                                                                </span>
-                                                            ) : (
-                                                                <span className="text-red-500">Chưa đặt tên nhóm</span>
-                                                            )}
-                                                        </h2>
+                                                        )}
                                                     </>
                                                 ) : (
                                                     "Chưa có nhóm"
@@ -102,6 +91,21 @@ const JudgePage = () => {
                                             </td>
                                             <td className="hidden px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:px-6 sm:py-4 md:table-cell">
                                                 {room.startTime}
+                                            </td>
+                                            <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">
+                                                {room.team?.schedulePresent?.googleMeetLink ? (
+                                                    <a
+                                                        href={room.team.schedulePresent.googleMeetLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-700 hover:underline"
+                                                    >
+                                                        <Video size={16} />
+                                                        <span>Tham gia</span>
+                                                    </a>
+                                                ) : (
+                                                    <span className="text-xs text-gray-400 italic">Chưa có link</span>
+                                                )}
                                             </td>
                                             <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">
                                                 {room.team ? (
@@ -122,7 +126,7 @@ const JudgePage = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
+                                        <td colSpan={7} className="px-4 py-8 text-center text-sm text-gray-500">
                                             Bạn chưa được phân công phòng chấm nào.
                                         </td>
                                     </tr>
