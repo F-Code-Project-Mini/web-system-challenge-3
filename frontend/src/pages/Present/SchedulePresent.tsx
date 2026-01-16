@@ -37,7 +37,7 @@ const SchedulePresent = ({ data }: Props) => {
                     </h3>
                 </div>
                 {registrationData.officialSlot.confirmed && registrationData.officialSlot.confirmedSlot ? (
-                    <div className="space-y-3 bg-teal-50/50 px-4 py-3">
+                    <div className="space-y-3 bg-teal-100/3 px-4 py-3">
                         <div className="grid grid-cols-2 gap-2 border-b-1 border-gray-400 pb-2 sm:grid-cols-3">
                             <div className="flex flex-col items-center rounded-lg p-2 text-center">
                                 <Calendar className="mb-1 h-3.5 w-3.5 text-teal-600" />

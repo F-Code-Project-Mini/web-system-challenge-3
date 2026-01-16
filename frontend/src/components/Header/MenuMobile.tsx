@@ -1,10 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router";
 import { Button } from "../ui/button";
 import { MobileNavLink } from "./NavLink";
 import { House, Send, ServerCrash, Users } from "lucide-react";
 import Helper from "~/utils/helper";
 import useAuth from "~/hooks/useAuth";
+import LocalStorage from "~/utils/localstorage";
+import type { RoleType } from "~/types/user.types";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "~/components/ui/select";
 
 const MenuMobileHeader = ({
     setShowMobileMenu,
@@ -12,6 +23,16 @@ const MenuMobileHeader = ({
     setShowMobileMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
     const { isLogin, user, logout } = useAuth();
+    const [currentRole, setCurrentRole] = useState<RoleType>(
+        (LocalStorage.getItem("role") as RoleType) || user?.roles?.[0],
+    );
+
+    const handleSwitchRole = (role: RoleType) => {
+        LocalStorage.setItem("role", role);
+        setCurrentRole(role);
+        setShowMobileMenu(false);
+        window.location.reload();
+    };
     return (
         <div className="mt-4 border-t border-gray-100 pt-4 lg:hidden">
             <nav className="space-y-1">
@@ -68,6 +89,36 @@ const MenuMobileHeader = ({
                             <p className="text-xs text-gray-500">{user.email}</p>
                         </div>
                     </div>
+                    {user.roles.length >= 2 && (
+                        <div className="mt-3">
+                            <label className="mb-2 block px-1 text-xs font-semibold text-gray-500 uppercase">
+                                Chuyển quyền
+                            </label>
+                            <Select value={currentRole} onValueChange={(value) => handleSwitchRole(value as RoleType)}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Chọn quyền" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Quyền của bạn</SelectLabel>
+                                        {user.roles.map((role) => (
+                                            <SelectItem key={role} value={role}>
+                                                {role === "CANDIDATE"
+                                                    ? "Thí sinh"
+                                                    : role === "MENTOR"
+                                                      ? "Mentor"
+                                                      : role === "JUDGE"
+                                                        ? "Giám khảo"
+                                                        : role === "HOST"
+                                                          ? "Host"
+                                                          : "Admin"}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
                     <div className="mt-2 space-y-1">
                         <button
                             onClick={() => {

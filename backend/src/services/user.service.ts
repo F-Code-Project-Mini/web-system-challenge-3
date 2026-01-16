@@ -27,6 +27,10 @@ class AuthService {
             throw new ErrorWithStatus({
                 status: HTTP_STATUS.NOT_FOUND,
                 message: "Thông tin đăng nhập của bạn không hợp lệ!",
+                roles: [
+                    // role của user này
+                    ...(accountExisted ? (accountExisted as any).roles : []),
+                ],
             });
         }
 
@@ -34,7 +38,7 @@ class AuthService {
 
         // check lại cái này nhé
         const token = await this.signAccesAndRefreshToken(accountExisted.id, (accountExisted as any).roles);
-        
+
         const { password: _, ...user } = accountExisted;
         console.log("accountExisted", accountExisted);
         const candidate = await userRepository.findById(accountExisted.id);
