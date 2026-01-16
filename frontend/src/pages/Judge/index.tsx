@@ -111,22 +111,34 @@ const JudgePage = () => {
 
                                                 <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">
                                                     {room.team?.schedulePresent?.googleMeetLink ? (
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="w-fit bg-teal-600 text-xs text-white hover:bg-teal-600/90"
-                                                            asChild
-                                                        >
-                                                            <a
-                                                                href={room.team.schedulePresent.googleMeetLink}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="flex items-center gap-1.5"
+                                                        ["urgent", "expired"].includes(status) ? (
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="w-fit bg-teal-600 text-xs text-white hover:bg-teal-600/90"
+                                                                asChild
+                                                            >
+                                                                <a
+                                                                    href={room.team.schedulePresent.googleMeetLink}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="flex items-center gap-1.5"
+                                                                >
+                                                                    <Video size={14} />
+                                                                    <span>Tham gia</span>
+                                                                </a>
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="w-fit cursor-not-allowed bg-teal-600 text-xs text-white opacity-50 hover:bg-teal-600/90"
+                                                                disabled
                                                             >
                                                                 <Video size={14} />
                                                                 <span>Tham gia</span>
-                                                            </a>
-                                                        </Button>
+                                                            </Button>
+                                                        )
                                                     ) : (
                                                         <span className="text-xs text-gray-400 italic">
                                                             Chưa có link
@@ -135,19 +147,25 @@ const JudgePage = () => {
                                                 </td>
                                                 <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">
                                                     {room.id ? (
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="w-fit text-xs"
-                                                            asChild
-                                                        >
-                                                            <Link
-                                                                to={`/judge/room/${room.id}`}
-                                                                className="flex items-center gap-1"
-                                                            >
-                                                                <Sparkles size={10} /> <span>Xem chi tiết</span>
-                                                            </Link>
-                                                        </Button>
+                                                        <>
+                                                            {["urgent", "expired"].includes(status) ? (
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className="w-fit text-xs"
+                                                                    asChild
+                                                                >
+                                                                    <Link
+                                                                        to={`/judge/room/${room.id}`}
+                                                                        className="flex items-center gap-1"
+                                                                    >
+                                                                        <Sparkles size={10} /> <span>Xem chi tiết</span>
+                                                                    </Link>
+                                                                </Button>
+                                                            ) : (
+                                                                <p className="italic">Chưa đến giờ</p>
+                                                            )}
+                                                        </>
                                                     ) : (
                                                         <span className="text-xs text-gray-400 italic">
                                                             Chưa có nhóm
