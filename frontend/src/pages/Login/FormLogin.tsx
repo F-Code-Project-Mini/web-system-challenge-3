@@ -43,7 +43,7 @@ const FormLogin = () => {
                 password,
                 // role: "CANDIDATE",
             };
-            if (password && !selectedRole) {
+            if (password && !selectedRole && roles.length >= 2) {
                 Notification.error({
                     text: "Vui lòng chọn quyền đăng nhập!",
                 });

@@ -11,17 +11,36 @@ import Helper from "~/utils/helper";
 import MenuMobileHeader from "./MenuMobile";
 import CandidateHeader from "./Candidate";
 import AdminHeader from "./Admin";
+import type { RoleType } from "~/types/user.types";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "~/components/ui/select";
 
 const Header = () => {
     const location = useLocation();
     const { isLogin, user } = useAuth();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const [currentRole, setCurrentRole] = useState<RoleType>(
+        (LocalStorage.getItem("role") as RoleType) || user?.roles?.[0],
+    );
 
     const menuRef = useRef<HTMLDivElement>(null);
 
     const showAgainInstruction = () => {
         LocalStorage.removeItem("isInstruction");
+        window.location.reload();
+    };
+
+    const handleSwitchRole = (role: RoleType) => {
+        LocalStorage.setItem("role", role);
+        setCurrentRole(role);
         window.location.reload();
     };
 
@@ -85,34 +104,61 @@ const Header = () => {
 
                 <div className="ml-auto hidden items-center gap-3 lg:flex">
                     {isLogin ? (
-                        <div className="relative" ref={menuRef}>
-                            <div className="flex items-center gap-3">
-                                <div
-                                    onClick={() => setShowUserMenu(!showUserMenu)}
-                                    className="group cursor-pointer rounded-lg px-3"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className="from-primary/20 to-primary/40 text-primary ring-primary/10 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br text-sm font-semibold ring-2 transition-all group-hover:ring-4">
-                                            {user.fullName.charAt(0)}
-                                        </div>
-                                        <span className="text-sm font-medium text-gray-700">{user.fullName}</span>
-                                        <ChevronDown
-                                            size={16}
-                                            className={`text-gray-500 transition-all ${showUserMenu ? "rotate-180" : ""}`}
-                                        />
-                                    </div>
-                                </div>
-                                {Helper.hasRole(user.roles, USER_ROLE.CANDIDATE) && (
-                                    <button
-                                        className="hover:border-primary hover:bg-primary/5 hover:text-primary flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-xs transition-all"
-                                        onClick={showAgainInstruction}
+                        <>
+                            {user.roles.length >= 2 && (
+                                <Select value={currentRole} onValueChange={(value) => handleSwitchRole(value as RoleType)}>
+                                    <SelectTrigger className="w-[140px]">
+                                        <SelectValue placeholder="Chọn quyền" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Quyền của bạn</SelectLabel>
+                                            {user.roles.map((role) => (
+                                                <SelectItem key={role} value={role}>
+                                                    {role === "CANDIDATE"
+                                                        ? "Thí sinh"
+                                                        : role === "MENTOR"
+                                                          ? "Mentor"
+                                                          : role === "JUDGE"
+                                                            ? "Giám khảo"
+                                                            : role === "HOST"
+                                                              ? "Host"
+                                                              : "Admin"}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            )}
+                            <div className="relative" ref={menuRef}>
+                                <div className="flex items-center gap-3">
+                                    <div
+                                        onClick={() => setShowUserMenu(!showUserMenu)}
+                                        className="group cursor-pointer rounded-lg px-3"
                                     >
-                                        <BadgeQuestionMark size={18} />
-                                    </button>
-                                )}
+                                        <div className="flex items-center gap-3">
+                                            <div className="from-primary/20 to-primary/40 text-primary ring-primary/10 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br text-sm font-semibold ring-2 transition-all group-hover:ring-4">
+                                                {user.fullName.charAt(0)}
+                                            </div>
+                                            <span className="text-sm font-medium text-gray-700">{user.fullName}</span>
+                                            <ChevronDown
+                                                size={16}
+                                                className={`text-gray-500 transition-all ${showUserMenu ? "rotate-180" : ""}`}
+                                            />
+                                        </div>
+                                    </div>
+                                    {Helper.hasRole(user.roles, USER_ROLE.CANDIDATE) && (
+                                        <button
+                                            className="hover:border-primary hover:bg-primary/5 hover:text-primary flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-xs transition-all"
+                                            onClick={showAgainInstruction}
+                                        >
+                                            <BadgeQuestionMark size={18} />
+                                        </button>
+                                    )}
+                                </div>
+                                {showUserMenu && <SubmenuHeader setShowUserMenu={setShowUserMenu} />}
                             </div>
-                            {showUserMenu && <SubmenuHeader setShowUserMenu={setShowUserMenu} />}
-                        </div>
+                        </>
                     ) : (
                         <Link to="/login">
                             <Button>Đăng nhập</Button>
