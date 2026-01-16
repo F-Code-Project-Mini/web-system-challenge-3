@@ -5,6 +5,7 @@ import WelcomePartition from "~/components/WelcomePartition";
 import { useQuery } from "@tanstack/react-query";
 import JudgeApi from "~/api-requests/judge.requests";
 import Loading from "~/components/Loading";
+import Helper from "~/utils/helper";
 
 const JudgePage = () => {
     const { data: rooms, isLoading } = useQuery({
@@ -29,7 +30,7 @@ const JudgePage = () => {
                 <div className="overflow-hidden rounded-lg border border-gray-200/70 bg-white shadow-xs transition-all">
                     <div className="border-b border-gray-200/70 bg-gradient-to-r from-gray-50/80 to-white px-5 py-4 sm:px-6 sm:py-5">
                         <h2 className="text-base font-semibold tracking-tight text-gray-900 sm:text-lg">
-                            DANH SÁCH PHÒNG CHẤM
+                            DANH SÁCH CHẤM
                         </h2>
                         <p className="mt-1.5 text-xs leading-relaxed text-gray-500 sm:text-sm">
                             Danh sách các phòng và nhóm mà bạn được phân công chấm điểm!
@@ -63,85 +64,124 @@ const JudgePage = () => {
                             </thead>
                             <tbody className="divide-y divide-gray-200/60 bg-white">
                                 {rooms && rooms.length > 0 ? (
-                                    rooms.map((room, index) => (
-                                        <tr key={room.id} className="transition-colors hover:bg-gray-50/50">
-                                            <td className="px-4 py-3.5 text-sm font-medium whitespace-nowrap text-gray-900 sm:px-6 sm:py-4">
-                                                {index + 1}
-                                            </td>
-                                            <td className="px-4 py-3.5 text-sm font-bold sm:px-6 sm:py-4">
-                                                {/* {room.team?.topic?.title || "Chưa có đề tài"} */}
-                                                <h2 className="text-base font-semibold tracking-tight text-gray-900">
-                                                    [NHÓM{" "}
-                                                    <span className="text-primary font-bold">{room.team?.group}</span>]
-                                                    -{" "}
-                                                    {room.team?.name ? (
-                                                        <span className="text-primary font-bold">{room.team.name}</span>
-                                                    ) : (
-                                                        <span className="text-red-500">Chưa đặt tên nhóm</span>
-                                                    )}
-                                                </h2>
-                                                <span className="text-xs italic">
-                                                    Đề tài:{" "}
-                                                    <span className="text-primary">
-                                                        {room.team?.topic?.title || "Chưa có đề tài"}
+                                    rooms.map((room, index) => {
+                                        const { color, status, text } = Helper.formatTimeUntil(room.startTime);
+                                        return (
+                                            <tr key={room.id} className="transition-colors hover:bg-gray-50/50">
+                                                <td className="px-4 py-3.5 text-sm font-medium whitespace-nowrap text-gray-900 sm:px-6 sm:py-4">
+                                                    {index + 1}
+                                                </td>
+                                                <td className="px-4 py-3.5 text-sm font-bold sm:px-6 sm:py-4">
+                                                    {/* {room.team?.topic?.title || "Chưa có đề tài"} */}
+                                                    <h2 className="text-base font-semibold tracking-tight text-gray-900">
+                                                        [NHÓM{" "}
+                                                        <span className="text-primary font-bold">
+                                                            {room.team?.group}
+                                                        </span>
+                                                        ] -{" "}
+                                                        {room.team?.name ? (
+                                                            <span className="text-primary font-bold">
+                                                                {room.team.name}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-red-500">Chưa đặt tên nhóm</span>
+                                                        )}
+                                                    </h2>
+                                                    <span className="text-xs italic">
+                                                        Đề tài:{" "}
+                                                        <span className="text-primary">
+                                                            {room.team?.topic?.title || "Chưa có đề tài"}
+                                                        </span>
                                                     </span>
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:px-6 sm:py-4">
-                                                <span className="font-semibold">{room.roomNumber}</span>
-                                                <p className="mt-0.5 text-xs text-gray-500">
-                                                    Thuyết trình{" "}
-                                                    {room.presentPhase === "OFFICIAL" ? "chính thức" : "thử"}
-                                                </p>
-                                            </td>
+                                                </td>
+                                                <td className="px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:px-6 sm:py-4">
+                                                    <span className="font-semibold">{room.roomNumber}</span>
+                                                    <p className="mt-0.5 text-xs text-gray-500">
+                                                        Thuyết trình{" "}
+                                                        {room.presentPhase === "OFFICIAL" ? "chính thức" : "thử"}
+                                                    </p>
+                                                </td>
 
-                                            <td className="hidden px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:px-6 sm:py-4 md:table-cell">
-                                                {room.startTime}
-                                            </td>
+                                                <td
+                                                    className="px-4 py-3.5 text-sm whitespace-nowrap sm:px-6 sm:py-4 md:table-cell"
+                                                    style={{ color }}
+                                                >
+                                                    <span
+                                                        className="text-sm font-bold whitespace-nowrap md:table-cell"
+                                                        style={{ color }}
+                                                    >
+                                                        {" "}
+                                                        {text}
+                                                    </span>
+                                                    <span>{Helper.formatDateTime(room.startTime)}</span>
+                                                </td>
 
-                                            <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">
-                                                {room.team?.schedulePresent?.googleMeetLink ? (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="w-fit bg-teal-600 text-xs text-white hover:bg-teal-600/90"
-                                                        asChild
-                                                    >
-                                                        <a
-                                                            href={room.team.schedulePresent.googleMeetLink}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="flex items-center gap-1.5"
-                                                        >
-                                                            <Video size={14} />
-                                                            <span>Tham gia</span>
-                                                        </a>
-                                                    </Button>
-                                                ) : (
-                                                    <span className="text-xs text-gray-400 italic">Chưa có link</span>
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">
-                                                {room.id ? (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="w-fit text-xs"
-                                                        asChild
-                                                    >
-                                                        <Link
-                                                            to={`/judge/room/${room.id}`}
-                                                            className="flex items-center gap-1"
-                                                        >
-                                                            <Sparkles size={10} /> <span>Xem chi tiết</span>
-                                                        </Link>
-                                                    </Button>
-                                                ) : (
-                                                    <span className="text-xs text-gray-400 italic">Chưa có nhóm</span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))
+                                                <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">
+                                                    {room.team?.schedulePresent?.googleMeetLink ? (
+                                                        ["urgent", "expired"].includes(status) ? (
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="w-fit bg-teal-600 text-xs text-white hover:bg-teal-600/90"
+                                                                asChild
+                                                            >
+                                                                <a
+                                                                    href={room.team.schedulePresent.googleMeetLink}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="flex items-center gap-1.5"
+                                                                >
+                                                                    <Video size={14} />
+                                                                    <span>Tham gia</span>
+                                                                </a>
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="w-fit cursor-not-allowed bg-teal-600 text-xs text-white opacity-50 hover:bg-teal-600/90"
+                                                                disabled
+                                                            >
+                                                                <Video size={14} />
+                                                                <span>Tham gia</span>
+                                                            </Button>
+                                                        )
+                                                    ) : (
+                                                        <span className="text-xs text-gray-400 italic">
+                                                            Chưa có link
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">
+                                                    {room.id ? (
+                                                        <>
+                                                            {["urgent", "expired"].includes(status) ? (
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className="w-fit text-xs"
+                                                                    asChild
+                                                                >
+                                                                    <Link
+                                                                        to={`/judge/room/${room.id}`}
+                                                                        className="flex items-center gap-1"
+                                                                    >
+                                                                        <Sparkles size={10} /> <span>Xem chi tiết</span>
+                                                                    </Link>
+                                                                </Button>
+                                                            ) : (
+                                                                <p className="italic">Chưa đến giờ</p>
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <span className="text-xs text-gray-400 italic">
+                                                            Chưa có nhóm
+                                                        </span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
                                 ) : (
                                     <tr>
                                         <td colSpan={8} className="px-4 py-8 text-center text-sm text-gray-500">

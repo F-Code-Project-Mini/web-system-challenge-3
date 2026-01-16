@@ -31,7 +31,19 @@ class JudgeRepository {
             },
         });
 
-        return judgeRooms.map((jr) => jr.room);
+        const now = new Date();
+
+        return judgeRooms
+            .map((jr) => jr.room)
+            .sort((a, b) => {
+                const aTime = a.startTime;
+                const bTime = b.startTime;
+
+                const aDiff = Math.abs(aTime.getTime() - now.getTime());
+                const bDiff = Math.abs(bTime.getTime() - now.getTime());
+
+                return aDiff - bDiff;
+            });
     };
 
     verifyJudgeInRoom = async (judgeId: string, roomId: string) => {
@@ -53,21 +65,10 @@ class JudgeRepository {
             include: {
                 team: {
                     include: {
-                        topic: {
-                            select: {
-                                id: true,
-                                title: true,
-                            },
-                        },
+                        topic: true,
                         candidates: {
                             include: {
-                                user: {
-                                    select: {
-                                        id: true,
-                                        fullName: true,
-                                        email: true,
-                                    },
-                                },
+                                user: true,
                             },
                         },
                         leader: {
@@ -92,8 +93,6 @@ class JudgeRepository {
                 },
             },
         });
-
-        
 
         return room?.team || null;
     };
