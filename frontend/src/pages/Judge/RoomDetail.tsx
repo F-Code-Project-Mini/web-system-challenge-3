@@ -5,8 +5,8 @@ import Loading from "~/components/Loading";
 import WelcomePartition from "~/components/WelcomePartition";
 import BadgeLeader from "~/components/BadgeLeader";
 import { Button } from "~/components/ui/button";
-import { Sparkles, ArrowLeft, FileText, Link as LinkIcon, Clock } from "lucide-react";
-import Helper from "~/utils/helper";
+import { Sparkles, ArrowLeft } from "lucide-react";
+import HistorySubmit from "./HistorySubmit";
 
 const RoomDetail = () => {
     const { roomId } = useParams<{ roomId: string }>();
@@ -38,7 +38,6 @@ const RoomDetail = () => {
 
     const candidates = team?.candidates || [];
     const leader = team?.leader;
-    const latestSubmission = team?.submissions?.[0];
 
     return (
         <>
@@ -58,90 +57,9 @@ const RoomDetail = () => {
                 </Link>
             </section>
 
-            {latestSubmission && (
-                <section className="mb-6" id="submission">
-                    <div className="overflow-hidden rounded-lg border border-blue-200/70 bg-blue-50/30 shadow-xs">
-                        <div className="border-b border-blue-200/70 bg-gradient-to-r from-blue-50/80 to-white px-5 py-4 sm:px-6 sm:py-5">
-                            <div className="flex items-center gap-2">
-                                <FileText size={20} className="text-blue-600" />
-                                <h3 className="text-base font-semibold tracking-tight text-gray-900 sm:text-lg">
-                                    Sản phẩm nộp gần nhất
-                                </h3>
-                            </div>
-                            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-gray-500 sm:text-sm">
-                                <Clock size={14} />
-                                <span>
-                                    Nộp bởi <span className="font-semibold">{latestSubmission.user.fullName}</span> -{" "}
-                                    {Helper.timeAgo(latestSubmission.submittedAt)}
-                                </span>
-                            </p>
-                        </div>
-                        <div className="px-5 py-4 sm:px-6 sm:py-5">
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                <div>
-                                    <p className="mb-2 text-xs font-medium tracking-wide text-gray-600 uppercase">
-                                        Slide thuyết trình
-                                    </p>
-                                    <a
-                                        href={latestSubmission.slideLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-1.5 text-sm break-all text-blue-600 hover:text-blue-700 hover:underline"
-                                    >
-                                        <LinkIcon size={14} />
-                                        <span className="truncate">{latestSubmission.slideLink}</span>
-                                    </a>
-                                </div>
-                                <div>
-                                    <p className="mb-2 text-xs font-medium tracking-wide text-gray-600 uppercase">
-                                        Bảng phân công
-                                    </p>
-                                    <a
-                                        href={latestSubmission.taskAssignmentLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-1.5 text-sm break-all text-blue-600 hover:text-blue-700 hover:underline"
-                                    >
-                                        <LinkIcon size={14} />
-                                        <span className="truncate">{latestSubmission.taskAssignmentLink}</span>
-                                    </a>
-                                </div>
-                            </div>
-                            {latestSubmission.productLinks && latestSubmission.productLinks.length > 0 && (
-                                <div className="mt-4">
-                                    <p className="mb-2 text-xs font-medium tracking-wide text-gray-600 uppercase">
-                                        Link sản phẩm
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {latestSubmission.productLinks.map((link, index) => (
-                                            <a
-                                                key={index}
-                                                href={link}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-1.5 rounded-md border border-blue-200 bg-white px-3 py-1.5 text-sm text-blue-600 transition-colors hover:border-blue-300 hover:text-blue-700"
-                                            >
-                                                <LinkIcon size={14} />
-                                                <span>Sản phẩm {index + 1}</span>
-                                            </a>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                            {latestSubmission.note && (
-                                <div className="mt-4">
-                                    <p className="mb-2 text-xs font-medium tracking-wide text-gray-600 uppercase">
-                                        Ghi chú
-                                    </p>
-                                    <p className="rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700">
-                                        {latestSubmission.note}
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </section>
-            )}
+            <section className="mb-6">
+                <HistorySubmit submissions={team?.submissions || []} isLoading={isLoading} />
+            </section>
 
             <section className="col-span-16" id="team-detail">
                 <div className="overflow-hidden rounded-lg border border-gray-200/70 bg-white shadow-xs transition-all">
