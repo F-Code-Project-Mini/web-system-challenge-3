@@ -108,7 +108,7 @@ const JudgePage = () => {
                                                 )}
                                             </td>
                                             <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">
-                                                {room.team ? (
+                                                {room.id ? (
                                                     <Link to={`/judge/room/${room.id}`}>
                                                         <Button
                                                             variant="outline"

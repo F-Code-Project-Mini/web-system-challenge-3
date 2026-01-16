@@ -1,14 +1,14 @@
-import { History, Link as LinkIcon } from "lucide-react";
+import { History, Clock, FileText, Github, Link2, ShieldCheck, NotepadTextDashed } from "lucide-react";
 import Loading from "~/components/Loading";
-import Helper from "~/utils/helper";
 import type { SubmissionType } from "~/api-requests/judge.requests";
+import { DialogDescription } from "../Submissions/DialogDescription";
 
-type Props = {
+type HistorySubmitProps = {
     submissions: SubmissionType[];
-    isLoading?: boolean;
+    isLoading: boolean;
 };
 
-const HistorySubmit = ({ submissions, isLoading }: Props) => {
+const HistorySubmit = ({ submissions, isLoading }: HistorySubmitProps) => {
     if (isLoading) return <Loading />;
 
     return (
@@ -27,10 +27,11 @@ const HistorySubmit = ({ submissions, isLoading }: Props) => {
                             <History className="h-8 w-8 text-gray-400" />
                         </div>
                         <p className="mt-4 text-sm font-medium text-gray-900">Chưa có lịch sử nộp bài</p>
-                        <p className="mt-1 text-xs text-gray-500">Nhóm chưa nộp bài lần nào</p>
+                        <p className="mt-1 text-xs text-gray-500">Hãy nộp bài dự thi của bạn ở form phía trên</p>
                     </div>
                 ) : (
                     <>
+                        {/* Mobile Card View */}
                         <div className="block lg:hidden">
                             <div className="space-y-4 p-4">
                                 {submissions.map((submission, index) => {
@@ -38,87 +39,104 @@ const HistorySubmit = ({ submissions, isLoading }: Props) => {
                                     return (
                                         <div
                                             key={submission.id}
-                                            className={`rounded-lg border ${isLatest ? "border-green-300 bg-green-50/30" : "border-gray-200 bg-white"} p-4 shadow-xs transition-all hover:shadow-sm`}
+                                            className="rounded-lg border border-gray-200/80 bg-white p-4"
                                         >
-                                            <div className="mb-3 flex items-center justify-between">
+                                            {/* Header */}
+                                            <div className="mb-3 flex items-center justify-between border-b border-gray-100 pb-3">
                                                 <div className="flex items-center gap-2">
-                                                    <span
-                                                        className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${isLatest ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}
-                                                    >
-                                                        Lần {submissions.length - index}
+                                                    <span className="text-base font-semibold text-gray-900">
+                                                        Lần #{submissions.length - index}
                                                     </span>
-                                                    {isLatest && (
-                                                        <span className="rounded-full bg-green-500 px-2 py-0.5 text-xs font-medium text-white">
-                                                            Mới nhất
+                                                    {isLatest ? (
+                                                        <span className="bg-primary/10 text-primary flex items-center gap-0.5 rounded-md px-2 py-0.5 text-xs font-medium">
+                                                            <ShieldCheck size={16} /> Final
+                                                        </span>
+                                                    ) : (
+                                                        <span className="flex items-center gap-0.5 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
+                                                            <NotepadTextDashed size={16} /> Draft
                                                         </span>
                                                     )}
                                                 </div>
+                                                <div className="flex items-center gap-1 text-xs text-gray-500">
+                                                    <Clock className="h-3 w-3" />
+                                                    <span>
+                                                        {new Date(submission.submittedAt).toLocaleDateString("vi-VN")}
+                                                    </span>
+                                                </div>
                                             </div>
 
-                                            <div className="space-y-2 text-sm">
+                                            {/* Content */}
+                                            <div className="space-y-3">
+                                                {/* Slide Link */}
                                                 <div>
-                                                    <span className="font-medium text-gray-700">Người nộp:</span>
-                                                    <span className="ml-2 text-gray-600">
-                                                        {submission.user.fullName}
-                                                    </span>
+                                                    <p className="mb-1 text-xs font-medium text-gray-500">
+                                                        Slide thuyết trình
+                                                    </p>
+                                                    {submission.slideLink ? (
+                                                        <a
+                                                            href={submission.slideLink}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-primary hover:text-primary/80 flex items-center gap-1.5 text-sm font-medium transition-colors"
+                                                        >
+                                                            <Link2 className="h-3.5 w-3.5" />
+                                                            <span>Xem slide</span>
+                                                        </a>
+                                                    ) : (
+                                                        <span className="text-xs text-gray-400 italic">Chưa có</span>
+                                                    )}
                                                 </div>
+
+                                                {/* Task Assignment */}
                                                 <div>
-                                                    <span className="font-medium text-gray-700">Thời gian:</span>
-                                                    <span className="ml-2 text-gray-600">
-                                                        {Helper.timeAgo(submission.submittedAt)}
-                                                    </span>
+                                                    <p className="mb-1 text-xs font-medium text-gray-500">
+                                                        Phân công task
+                                                    </p>
+                                                    {submission.taskAssignmentLink ? (
+                                                        <a
+                                                            href={submission.taskAssignmentLink}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center gap-1.5 text-sm text-gray-700 transition-colors hover:text-gray-900"
+                                                        >
+                                                            <FileText className="h-3.5 w-3.5" />
+                                                            <span>Xem sheet</span>
+                                                        </a>
+                                                    ) : (
+                                                        <span className="text-xs text-gray-400 italic">Chưa có</span>
+                                                    )}
                                                 </div>
-                                                <div>
-                                                    <span className="font-medium text-gray-700">Slide:</span>
-                                                    <a
-                                                        href={submission.slideLink}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="ml-2 inline-flex items-center gap-1 text-blue-600 hover:underline"
-                                                    >
-                                                        <LinkIcon size={12} />
-                                                        <span className="max-w-[200px] truncate">
-                                                            {submission.slideLink}
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                                <div>
-                                                    <span className="font-medium text-gray-700">Phân công:</span>
-                                                    <a
-                                                        href={submission.taskAssignmentLink}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="ml-2 inline-flex items-center gap-1 text-blue-600 hover:underline"
-                                                    >
-                                                        <LinkIcon size={12} />
-                                                        <span className="max-w-[200px] truncate">
-                                                            {submission.taskAssignmentLink}
-                                                        </span>
-                                                    </a>
-                                                </div>
+
+                                                {/* Product Links */}
                                                 {submission.productLinks && submission.productLinks.length > 0 && (
                                                     <div>
-                                                        <span className="font-medium text-gray-700">Sản phẩm:</span>
-                                                        <div className="mt-1 flex flex-wrap gap-2">
-                                                            {submission.productLinks.map((link, i) => (
+                                                        <p className="mb-1.5 text-xs font-medium text-gray-500">
+                                                            Source/Figma
+                                                        </p>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {submission.productLinks.map((link, linkIndex) => (
                                                                 <a
-                                                                    key={i}
+                                                                    key={linkIndex}
                                                                     href={link}
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
-                                                                    className="inline-flex items-center gap-1 rounded bg-blue-50 px-2 py-1 text-xs text-blue-600 hover:bg-blue-100"
+                                                                    className="flex items-center gap-1 rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-xs text-gray-700 transition-colors hover:border-gray-300 hover:bg-gray-100"
                                                                 >
-                                                                    <LinkIcon size={10} />
-                                                                    Link {i + 1}
+                                                                    <Github className="h-3 w-3" />
+                                                                    <span>Link {linkIndex + 1}</span>
                                                                 </a>
                                                             ))}
                                                         </div>
                                                     </div>
                                                 )}
+
+                                                {/* Note */}
                                                 {submission.note && (
                                                     <div>
-                                                        <span className="font-medium text-gray-700">Ghi chú:</span>
-                                                        <p className="mt-1 text-gray-600">{submission.note}</p>
+                                                        <p className="mb-1.5 text-xs font-medium text-gray-500">
+                                                            Ghi chú
+                                                        </p>
+                                                        <DialogDescription desc={submission.note} />
                                                     </div>
                                                 )}
                                             </div>
@@ -128,14 +146,12 @@ const HistorySubmit = ({ submissions, isLoading }: Props) => {
                             </div>
                         </div>
 
+                        {/* Desktop Table View */}
                         <table className="hidden w-full lg:table">
                             <thead className="bg-gray-50/50">
                                 <tr>
                                     <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
                                         Lần nộp
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
-                                        Người nộp
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
                                         Thời gian
@@ -147,7 +163,7 @@ const HistorySubmit = ({ submissions, isLoading }: Props) => {
                                         Phân công task
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
-                                        Sản phẩm
+                                        Source/Figma
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
                                         Ghi chú
@@ -155,66 +171,77 @@ const HistorySubmit = ({ submissions, isLoading }: Props) => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200/60 bg-white">
-                                {submissions.map((submission, index) => {
+                                {submissions.slice().map((submission, index) => {
                                     const isLatest = index === 0;
                                     return (
-                                        <tr
-                                            key={submission.id}
-                                            className={`transition-colors ${isLatest ? "bg-green-50/30 hover:bg-green-50/50" : "hover:bg-gray-50/50"}`}
-                                        >
-                                            <td className="px-4 py-3.5 text-sm font-medium whitespace-nowrap sm:px-6 sm:py-4">
+                                        <tr key={submission.id} className="transition-colors hover:bg-gray-50/50">
+                                            <td className="px-4 py-3.5 text-sm font-medium whitespace-nowrap text-gray-900 sm:px-6 sm:py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-gray-900">
-                                                        Lần {submissions.length - index}
-                                                    </span>
-                                                    {isLatest && (
-                                                        <span className="rounded-full bg-green-500 px-2 py-0.5 text-xs font-medium text-white">
-                                                            Mới nhất
+                                                    <span>#{submissions.length - index}</span>
+                                                    {isLatest ? (
+                                                        <span className="bg-primary/10 text-primary flex items-center gap-0.5 rounded-md px-2 py-0.5 text-xs font-medium">
+                                                            <ShieldCheck size={16} /> Final
+                                                        </span>
+                                                    ) : (
+                                                        <span className="flex items-center gap-0.5 rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500">
+                                                            <NotepadTextDashed size={16} /> Draft
                                                         </span>
                                                     )}
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-3.5 text-sm whitespace-nowrap text-gray-700 sm:px-6 sm:py-4">
-                                                {submission.user.fullName}
-                                            </td>
                                             <td className="px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:px-6 sm:py-4">
-                                                {Helper.timeAgo(submission.submittedAt)}
+                                                <div className="flex items-center gap-1.5">
+                                                    <Clock className="h-3.5 w-3.5 text-gray-400" />
+                                                    <span>
+                                                        {new Date(submission.submittedAt).toLocaleString("vi-VN")}
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td className="px-4 py-3.5 text-sm sm:px-6 sm:py-4">
-                                                <a
-                                                    href={submission.slideLink}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex max-w-[200px] items-center gap-1 truncate text-blue-600 hover:underline"
-                                                >
-                                                    <LinkIcon size={14} />
-                                                    <span className="truncate">{submission.slideLink}</span>
-                                                </a>
+                                                {submission.slideLink ? (
+                                                    <a
+                                                        href={submission.slideLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-primary hover:text-primary/80 flex items-center gap-1.5 font-medium transition-colors"
+                                                    >
+                                                        <Link2 className="h-3.5 w-3.5" />
+                                                        <span>Xem slide</span>
+                                                    </a>
+                                                ) : (
+                                                    <span className="text-xs text-gray-400 italic">Chưa có</span>
+                                                )}
                                             </td>
                                             <td className="px-4 py-3.5 text-sm sm:px-6 sm:py-4">
-                                                <a
-                                                    href={submission.taskAssignmentLink}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex max-w-[200px] items-center gap-1 truncate text-blue-600 hover:underline"
-                                                >
-                                                    <LinkIcon size={14} />
-                                                    <span className="truncate">{submission.taskAssignmentLink}</span>
-                                                </a>
+                                                {submission.taskAssignmentLink ? (
+                                                    <a
+                                                        href={submission.taskAssignmentLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-1.5 text-gray-600 transition-colors hover:text-gray-900"
+                                                    >
+                                                        <FileText className="h-3.5 w-3.5" />
+                                                        <span>Xem sheet</span>
+                                                    </a>
+                                                ) : (
+                                                    <span className="text-xs text-gray-400 italic">Chưa có</span>
+                                                )}
                                             </td>
                                             <td className="px-4 py-3.5 text-sm sm:px-6 sm:py-4">
                                                 {submission.productLinks && submission.productLinks.length > 0 ? (
-                                                    <div className="flex flex-wrap gap-2">
-                                                        {submission.productLinks.map((link, i) => (
+                                                    <div className="flex flex-col gap-1.5">
+                                                        {submission.productLinks.map((link, linkIndex) => (
                                                             <a
-                                                                key={i}
+                                                                key={linkIndex}
                                                                 href={link}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                className="inline-flex items-center gap-1 rounded bg-blue-50 px-2 py-1 text-xs text-blue-600 hover:bg-blue-100"
+                                                                className="flex items-center gap-1.5 text-gray-600 transition-colors hover:text-gray-900"
                                                             >
-                                                                <LinkIcon size={10} />
-                                                                Link {i + 1}
+                                                                <Github className="h-3.5 w-3.5" />
+                                                                <span className="max-w-[200px] truncate">
+                                                                    Link {linkIndex + 1}
+                                                                </span>
                                                             </a>
                                                         ))}
                                                     </div>
@@ -222,9 +249,13 @@ const HistorySubmit = ({ submissions, isLoading }: Props) => {
                                                     <span className="text-xs text-gray-400 italic">Không có</span>
                                                 )}
                                             </td>
-                                            <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">
-                                                {submission.note || (
-                                                    <span className="text-xs text-gray-400 italic">Không có</span>
+                                            <td className="px-4 py-3.5 text-sm sm:px-6 sm:py-4">
+                                                {submission.note ? (
+                                                    <DialogDescription desc={submission.note} />
+                                                ) : (
+                                                    <span className="text-xs text-gray-400 italic">
+                                                        Không có ghi chú
+                                                    </span>
                                                 )}
                                             </td>
                                         </tr>

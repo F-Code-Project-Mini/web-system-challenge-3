@@ -2,7 +2,7 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Note } from "./Note";
 import { useQuery } from "@tanstack/react-query";
-import MentorApi from "~/api-requests/mentor.requests";
+import JudgeApi from "~/api-requests/judge.requests";
 import TeamApi from "~/api-requests/team.requests";
 import { useNavigate, useParams } from "react-router";
 import { socket } from "~/utils/socket";
@@ -28,7 +28,7 @@ const JudgeBaremPage = () => {
     const debounceNoteMapRef = useRef<Record<string, number>>({});
 
     const { data: candidates } = useQuery({
-        queryKey: ["mentor", "get-team", params.id],
+        queryKey: ["judge", "get-team", params.id],
         queryFn: async () => {
             const res = await TeamApi.getTeamById(params.id || "");
             return res.result;
@@ -51,10 +51,10 @@ const JudgeBaremPage = () => {
         isDataInitialized.current = false;
     }, [candidates, candidateActive, params.candidateId]);
 
-    const { data: baremMentor } = useQuery({
-        queryKey: ["mentor-barem", candidateActive, params.candidateId],
+    const { data: baremJudge } = useQuery({
+        queryKey: ["judge-barem", candidateActive, params.candidateId],
         queryFn: async () => {
-            const res = await MentorApi.getBarem(candidateActive?.id || "");
+            const res = await JudgeApi.getBarem(candidateActive?.id || "");
             return res.result;
         },
         enabled: !!candidateActive,
@@ -62,11 +62,11 @@ const JudgeBaremPage = () => {
 
     // Reset lại data (k reset chuyển cái khác nó vẫn giữ lại data cũ của ứng viên khác)
     useEffect(() => {
-        if (!baremMentor) return;
+        if (!baremJudge) return;
 
         const newScores: { [key: string]: number } = {};
         const newNotes: { [key: string]: string } = {};
-        baremMentor.forEach((item) => {
+        baremJudge.forEach((item) => {
             item.partitions.forEach((partition, partitionIndex) => {
                 partition.partitions?.forEach((subPart, subIndex) => {
                     const scoreKey = `${item.target}-${partitionIndex}-${subIndex}`;
@@ -88,10 +88,10 @@ const JudgeBaremPage = () => {
         setTimeout(() => {
             isDataInitialized.current = true;
         }, 100);
-    }, [baremMentor]);
+    }, [baremJudge]);
 
     const totalMaxScore =
-        baremMentor?.reduce((sum, item) => {
+        baremJudge?.reduce((sum, item) => {
             if (!isLeader && item.target == "Leader") {
                 return sum;
             }
@@ -132,11 +132,11 @@ const JudgeBaremPage = () => {
 
     // useEffect riêng cho scores
     useEffect(() => {
-        if (!baremMentor || !candidateActive || !isDataInitialized.current) return;
+        if (!baremJudge || !candidateActive || !isDataInitialized.current) return;
 
         Object.entries(scores).forEach(([key, score]) => {
             const [target, partitionIndex, subIndex] = key.split("-");
-            const partition = baremMentor?.find((item) => item.target === target)?.partitions[Number(partitionIndex)];
+            const partition = baremJudge?.find((item) => item.target === target)?.partitions[Number(partitionIndex)];
             const subPart = partition?.partitions?.[Number(subIndex)];
 
             if (!subPart) return;
@@ -155,15 +155,15 @@ const JudgeBaremPage = () => {
                 });
             }, 500);
         });
-    }, [scores, baremMentor, candidateActive, user.id, notes]);
+    }, [scores, baremJudge, candidateActive, user.id, notes]);
 
     // useEffect riêng cho notes
     useEffect(() => {
-        if (!baremMentor || !candidateActive || !isDataInitialized.current) return;
+        if (!baremJudge || !candidateActive || !isDataInitialized.current) return;
 
         Object.entries(notes).forEach(([key, note]) => {
             const [target, partitionIndex, subIndex] = key.split("-");
-            const partition = baremMentor?.find((item) => item.target === target)?.partitions[Number(partitionIndex)];
+            const partition = baremJudge?.find((item) => item.target === target)?.partitions[Number(partitionIndex)];
             const subPart = partition?.partitions?.[Number(subIndex)];
 
             if (!subPart) return;
@@ -182,12 +182,12 @@ const JudgeBaremPage = () => {
                 });
             }, 500);
         });
-    }, [notes, baremMentor, candidateActive, user.id, scores]);
+    }, [notes, baremJudge, candidateActive, user.id, scores]);
 
     return (
         <section className="px-4 sm:px-0">
             <div className="mb-6 sm:mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Mentor chấm điểm Challenge 3</h1>
+                <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Judge chấm điểm Challenge 3</h1>
                 <p className="mt-2 text-sm text-gray-600">Vui lòng chọn ứng viên và điền điểm cho từng tiêu chí</p>
             </div>
 
@@ -197,7 +197,7 @@ const JudgeBaremPage = () => {
                     value={candidateActive?.id}
                     onValueChange={(id) => {
                         setcandidateActive(candidates?.candidates.find((candidate) => candidate.id === id));
-                        navigate(`/mentor/team/${params.id}/candidate/${id}`);
+                        navigate(`/judge/room/${params.id}/candidate/${id}`);
                     }}
                     className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5"
                 >
@@ -255,7 +255,7 @@ const JudgeBaremPage = () => {
                             </thead>
 
                             <tbody className="divide-y divide-gray-200 bg-white">
-                                {baremMentor?.flatMap((item) => {
+                                {baremJudge?.flatMap((item) => {
                                     let targetRowIndex = 0;
                                     const totalSubPartitions = item.partitions.reduce(
                                         (sum, partition) => sum + (partition.partitions?.length || 0),

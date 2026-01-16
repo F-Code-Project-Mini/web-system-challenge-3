@@ -1,3 +1,4 @@
+import type { BaremResultItem } from "~/types/barem";
 import type { ResponseDetailData } from "~/types/team.types";
 import { privateApi } from "~/utils/axiosInstance";
 
@@ -73,7 +74,7 @@ class JudgeApi {
     }
 
     static async getBarem(candidateId: string) {
-        const res = await privateApi.get<ResponseDetailData<any>>(`/judge/barem/${candidateId}`);
+        const res = await privateApi.get<ResponseDetailData<BaremResultItem[]>>(`/judge/get-barem/${candidateId}`);
         return res.data;
     }
 }
