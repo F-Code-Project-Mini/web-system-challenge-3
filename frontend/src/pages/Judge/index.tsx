@@ -103,10 +103,17 @@ const JudgePage = () => {
                                                 </td>
 
                                                 <td
-                                                    className="px-4 py-3.5 text-sm font-bold whitespace-nowrap sm:px-6 sm:py-4 md:table-cell"
+                                                    className="px-4 py-3.5 text-sm whitespace-nowrap sm:px-6 sm:py-4 md:table-cell"
                                                     style={{ color }}
                                                 >
-                                                    {text}
+                                                    <span
+                                                        className="text-sm font-bold whitespace-nowrap md:table-cell"
+                                                        style={{ color }}
+                                                    >
+                                                        {" "}
+                                                        {text}
+                                                    </span>
+                                                    <span>{Helper.formatDateTime(room.startTime)}</span>
                                                 </td>
 
                                                 <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">

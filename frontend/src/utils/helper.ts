@@ -14,6 +14,18 @@ class Helper {
             year: "numeric",
         });
     }
+
+    static formatDateTime(date: string): string {
+        const d = new Date(date);
+        const adjusted = new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+        return adjusted.toLocaleString("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    }
     static isInRangeDate(date: Date, startDate: string, endDate: string): boolean {
         const currentUTC = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
 
