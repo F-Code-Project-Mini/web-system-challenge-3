@@ -155,5 +155,21 @@ class Helper {
         }
         return roles?.includes(role);
     };
+    static getRoleName = (role: RoleType) => {
+        switch (role) {
+            case "CANDIDATE":
+                return "Thí sinh";
+            case "MENTOR":
+                return "Mentor";
+            case "JUDGE":
+                return "Giám khảo";
+            case "HOST":
+                return "Host";
+            case "ADMIN":
+                return "Admin";
+            default:
+                return role;
+        }
+    };
 }
 export default Helper;
