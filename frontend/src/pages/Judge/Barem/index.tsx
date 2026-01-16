@@ -189,7 +189,7 @@ const JudgeBaremPage = () => {
     return (
         <section className="px-4 sm:px-0">
             <div className="mb-6 sm:mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Judge chấm điểm Challenge 3</h1>
+                <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Judge chấm điểm Present thử</h1>
                 <p className="mt-2 text-sm text-gray-600">Vui lòng chọn ứng viên và điền điểm cho từng tiêu chí</p>
             </div>
 

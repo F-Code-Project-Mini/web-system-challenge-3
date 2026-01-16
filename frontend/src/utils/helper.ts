@@ -1,5 +1,9 @@
 import type { RoleType } from "~/types/user.types";
-
+interface TimeStatus {
+    text: string;
+    color: string;
+    status: "expired" | "urgent" | "near" | "far";
+}
 class Helper {
     static formatDate(date: string): string {
         const d = new Date(date);
@@ -70,6 +74,58 @@ class Helper {
 
         const diffInYears = Math.floor(diffInMonths / 12);
         return `${diffInYears} năm trước`;
+    }
+
+    static formatTimeUntil(targetDate: string | Date): TimeStatus {
+        let dateStr = targetDate;
+        if (typeof targetDate === "string" && targetDate.endsWith("Z")) {
+            dateStr = targetDate.slice(0, -1);
+        }
+        const target = new Date(dateStr);
+        const now = new Date();
+        if (isNaN(target.getTime())) {
+            return { text: "Ngày không hợp lệ", color: "#9CA3AF", status: "expired" };
+        }
+        const diffInMs = target.getTime() - now.getTime();
+
+        if (diffInMs <= 0) {
+            return { text: "Đã qua", color: "#6B7280", status: "expired" };
+        }
+
+        const seconds = Math.floor(diffInMs / 1000);
+
+        let color = "#3B82F6";
+        let status: TimeStatus["status"] = "far";
+
+        if (seconds < 3600) {
+            color = "#EF4444";
+            status = "urgent";
+        } else if (seconds < 86400) {
+            color = "#F59E0B";
+            status = "near";
+        }
+
+        const thresholds = [
+            { unit: "năm", seconds: 31536000 },
+            { unit: "tháng", seconds: 2592000 },
+            { unit: "ngày", seconds: 86400 },
+            { unit: "giờ", seconds: 3600 },
+            { unit: "phút", seconds: 60 },
+            { unit: "giây", seconds: 1 },
+        ];
+
+        for (const threshold of thresholds) {
+            const value = Math.floor(seconds / threshold.seconds);
+            if (value >= 1) {
+                return {
+                    text: `${value} ${threshold.unit} nữa`,
+                    color,
+                    status,
+                };
+            }
+        }
+
+        return { text: "Ngay bây giờ", color: "#EF4444", status: "urgent" };
     }
 
     static isActive = (src: string, dest: string) => {
