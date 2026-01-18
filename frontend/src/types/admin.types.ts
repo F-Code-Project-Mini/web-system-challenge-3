@@ -104,6 +104,31 @@ export interface AdminRoomType {
         name?: string;
         topic?: { title: string };
     };
+    _count: {
+        judgeRooms: number;
+    };
+}
+
+export interface AdminRoomDetailType {
+    id: string;
+    roomNumber: string;
+    presentPhase: string;
+    modePresent: string;
+    startTime: string;
+    endTime: string;
+    team?: {
+        id: string;
+        group: number;
+        name?: string;
+        topic?: { title: string };
+        candidates: Array<{
+            id: string;
+            user: {
+                id: string;
+                fullName: string;
+            };
+        }>;
+    };
     judgeRooms: Array<{
         id: string;
         judge: {
@@ -111,6 +136,13 @@ export interface AdminRoomType {
             fullName: string;
             email: string;
         };
+        averageScore: number;
+        candidateScores: Array<{
+            candidateId: string;
+            candidateName: string;
+            score: number;
+        }>;
+        hasScored: boolean;
     }>;
 }
 

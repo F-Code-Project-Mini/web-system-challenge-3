@@ -2,6 +2,7 @@ import type {
     AddJudgeToRoomRequest,
     AddRoleRequest,
     AdminRoomType,
+    AdminRoomDetailType,
     AdminUserType,
     CreateUserRequest,
     CreateUserResponse,
@@ -44,6 +45,11 @@ class AdminApi {
 
     static async getAllRooms() {
         const res = await privateApi.get<ResponseDetailData<AdminRoomType[]>>("/admin/rooms");
+        return res.data;
+    }
+
+    static async getRoomDetail(roomId: string) {
+        const res = await privateApi.get<ResponseDetailData<AdminRoomDetailType>>(`/admin/rooms/${roomId}`);
         return res.data;
     }
 

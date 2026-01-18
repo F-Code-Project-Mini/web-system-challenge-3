@@ -174,6 +174,51 @@ class AdminRepository {
                         },
                     },
                 },
+                _count: {
+                    select: {
+                        judgeRooms: true,
+                    },
+                },
+            },
+            orderBy: {
+                roomNumber: "asc",
+            },
+        });
+    };
+
+    public getRoomDetail = async (roomId: string) => {
+        return await prisma.room.findUnique({
+            where: { id: roomId },
+            select: {
+                id: true,
+                roomNumber: true,
+                presentPhase: true,
+                modePresent: true,
+                startTime: true,
+                endTime: true,
+                team: {
+                    select: {
+                        id: true,
+                        group: true,
+                        name: true,
+                        topic: {
+                            select: {
+                                title: true,
+                            },
+                        },
+                        candidates: {
+                            select: {
+                                id: true,
+                                user: {
+                                    select: {
+                                        id: true,
+                                        fullName: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
                 judgeRooms: {
                     select: {
                         id: true,
@@ -186,9 +231,6 @@ class AdminRepository {
                         },
                     },
                 },
-            },
-            orderBy: {
-                roomNumber: "asc",
             },
         });
     };

@@ -12,6 +12,7 @@ adminRouter.post("/users/:id/roles", auth, isRole([RoleType.ADMIN]), adminContro
 adminRouter.delete("/users/:id/roles/:roleId", auth, isRole([RoleType.ADMIN]), adminController.removeRoleFromUser);
 
 adminRouter.get("/rooms", auth, isRole([RoleType.ADMIN]), adminController.getAllRooms);
+adminRouter.get("/rooms/:id", auth, isRole([RoleType.ADMIN]), adminController.getRoomDetail);
 adminRouter.post("/rooms/:roomId/judges", auth, isRole([RoleType.ADMIN]), adminController.addJudgeToRoom);
 adminRouter.delete("/rooms/judges/:judgeRoomId", auth, isRole([RoleType.ADMIN]), adminController.removeJudgeFromRoom);
 adminRouter.get("/judges", auth, isRole([RoleType.ADMIN]), adminController.getJudgeUsers);

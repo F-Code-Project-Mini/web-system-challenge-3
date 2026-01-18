@@ -85,6 +85,56 @@ class AdminService {
         return rooms;
     };
 
+    public getRoomDetail = async (roomId: string) => {
+        const room = await adminRepository.getRoomDetail(roomId);
+        if (!room) {
+            throw new ErrorWithStatus({
+                status: HTTP_STATUS.NOT_FOUND,
+                message: "Phòng chấm không tồn tại!",
+            });
+        }
+
+        if (!room.team) {
+            return room;
+        }
+
+        // Xác định type dựa vào present_phase
+        const scoreType = room.presentPhase === "TRIAL" ? "TRIAL_PRESENTATION" : "OFFICIAL_PRESENTATION";
+
+        // Tính điểm cho từng judge
+        const judgesWithScores = await Promise.all(
+            room.judgeRooms.map(async (jr) => {
+                // Lấy điểm của judge này cho tất cả candidates trong team
+                const candidateScores = await Promise.all(
+                    room.team!.candidates.map(async (candidate) => {
+                        const score = await userRepository.getScoreMentor(jr.judge.id, candidate.id, "JUDGE");
+                        return {
+                            candidateId: candidate.id,
+                            candidateName: candidate.user?.fullName,
+                            score: score || 0,
+                        };
+                    }),
+                );
+
+                const totalScore = candidateScores.reduce((sum, c) => sum + c.score, 0);
+                const avgScore = candidateScores.length > 0 ? totalScore / candidateScores.length : 0;
+
+                return {
+                    id: jr.id,
+                    judge: jr.judge,
+                    averageScore: avgScore,
+                    candidateScores,
+                    hasScored: totalScore > 0,
+                };
+            }),
+        );
+
+        return {
+            ...room,
+            judgeRooms: judgesWithScores,
+        };
+    };
+
     public addJudgeToRoom = async (judgeId: string, roomId: string) => {
         const user = await adminRepository.getUserById(judgeId);
         if (!user) {
@@ -160,13 +210,22 @@ class AdminService {
         const rooms = await adminRepository.getAllRooms();
         const teamRoom = rooms.find((room) => room.team?.id === teamId);
 
-        if (!teamRoom || !teamRoom.judgeRooms || teamRoom.judgeRooms.length === 0) {
+        if (!teamRoom) {
             return null;
         }
 
+        // Lấy chi tiết phòng để có judges
+        const roomDetail = await adminRepository.getRoomDetail(teamRoom.id);
+        if (!roomDetail || !roomDetail.judgeRooms || roomDetail.judgeRooms.length === 0) {
+            return null;
+        }
+
+        // Xác định type dựa vào present_phase: TRIAL hoặc OFFICIAL
+        const scoreType = roomDetail.presentPhase === "TRIAL" ? "TRIAL_PRESENTATION" : "OFFICIAL_PRESENTATION";
+
         // Lấy điểm từ từng judge và tính trung bình
         const scores = await Promise.all(
-            teamRoom.judgeRooms.map(async (jr) => {
+            roomDetail.judgeRooms.map(async (jr) => {
                 const score = await userRepository.getScoreMentor(jr.judge.id, candidateId, "JUDGE");
                 return score || 0;
             }),

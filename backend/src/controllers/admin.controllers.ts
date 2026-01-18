@@ -75,6 +75,19 @@ class AdminController {
         }
     };
 
+    public getRoomDetail = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { id } = req.params;
+            const room = await adminService.getRoomDetail(id);
+            res.status(HTTP_STATUS.OK).json({
+                message: "Lấy thông tin phòng thành công!",
+                result: room,
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
     public addJudgeToRoom = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { roomId } = req.params;
