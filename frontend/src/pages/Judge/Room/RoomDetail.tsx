@@ -5,10 +5,10 @@ import Loading from "~/components/Loading";
 import WelcomePartition from "~/components/WelcomePartition";
 import BadgeLeader from "~/components/BadgeLeader";
 import { Button } from "~/components/ui/button";
-import { Sparkles, ArrowLeft } from "lucide-react";
-import HistorySubmit from "./HistorySubmit";
+import { Sparkles } from "lucide-react";
+import HistorySubmit from "../HistorySubmit";
 import Helper from "~/utils/helper";
-import { ShowTopic } from "../Candidate/ShowTopic";
+import { ShowTopic } from "../../Candidate/ShowTopic";
 
 const RoomDetail = () => {
     const { roomId } = useParams<{ roomId: string }>();
@@ -45,18 +45,6 @@ const RoomDetail = () => {
         <>
             <section className="mb-6 sm:mb-8">
                 <WelcomePartition />
-            </section>
-
-            <section className="mb-4">
-                <Link to="/judge">
-                    <Button
-                        variant="outline"
-                        className="flex items-center gap-2 rounded-lg border px-3 py-2 shadow-sm transition-all hover:shadow-md"
-                    >
-                        <ArrowLeft size={16} />
-                        <span>Quay lại danh sách phòng</span>
-                    </Button>
-                </Link>
             </section>
 
             <section className="mb-6">

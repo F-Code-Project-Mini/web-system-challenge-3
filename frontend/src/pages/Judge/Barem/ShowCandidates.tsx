@@ -17,7 +17,7 @@ export const ShowCandidates = ({
     const params = useParams<ParamsBarem>();
     const navigate = useNavigate();
     return (
-        <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-xs sm:p-6">
+        <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 sm:p-6">
             <h3 className="text-primary mb-4 text-base font-semibold sm:text-lg">Ứng viên</h3>
             <RadioGroup
                 value={candidateActive?.id}
