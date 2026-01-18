@@ -163,7 +163,7 @@ const RoomsPage = () => {
                                                                 Email
                                                             </th>
                                                             <th className="px-4 py-3 text-center text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
-                                                                Điểm TB
+                                                                Tổng điểm
                                                             </th>
                                                             <th className="px-4 py-3 text-center text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
                                                                 Trạng thái
@@ -189,7 +189,7 @@ const RoomsPage = () => {
                                                                     {jr.judge.email}
                                                                 </td>
                                                                 <td className="px-4 py-3.5 text-center text-sm font-semibold text-gray-900 sm:px-6 sm:py-4">
-                                                                    {jr.averageScore.toFixed(1)}
+                                                                    {jr.totalScore.toFixed(1)}
                                                                 </td>
                                                                 <td className="px-4 py-3.5 text-center sm:px-6 sm:py-4">
                                                                     {jr.hasScored ? (
