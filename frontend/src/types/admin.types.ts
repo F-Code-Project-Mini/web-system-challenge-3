@@ -136,7 +136,7 @@ export interface AdminRoomDetailType {
             fullName: string;
             email: string;
         };
-        averageScore: number;
+        totalScore: number;
         candidateScores: Array<{
             candidateId: string;
             candidateName: string;

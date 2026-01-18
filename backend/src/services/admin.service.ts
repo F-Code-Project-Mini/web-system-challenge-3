@@ -117,12 +117,11 @@ class AdminService {
                 );
 
                 const totalScore = candidateScores.reduce((sum, c) => sum + c.score, 0);
-                const avgScore = candidateScores.length > 0 ? totalScore / candidateScores.length : 0;
 
                 return {
                     id: jr.id,
                     judge: jr.judge,
-                    averageScore: avgScore,
+                    totalScore: totalScore,
                     candidateScores,
                     hasScored: totalScore > 0,
                 };
