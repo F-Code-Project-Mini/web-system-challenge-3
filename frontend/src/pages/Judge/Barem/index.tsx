@@ -289,7 +289,7 @@ const JudgeBaremPage = () => {
                                                     {isFirstSubPart && (
                                                         <td
                                                             rowSpan={criteriaRowSpan}
-                                                            className={`bg-neutral-50/10 px-4 py-4 text-center ${scaleBarem ? "whitespace-nowrap" : "w-60"}`}
+                                                            className={`bg-neutral-50/5 px-4 py-4 text-center ${scaleBarem ? "whitespace-nowrap" : "w-60"}`}
                                                         >
                                                             <span className="text-sm font-semibold text-gray-800">
                                                                 {partition.criteria}
@@ -365,7 +365,7 @@ const JudgeBaremPage = () => {
 };
 
 const TotalScore = ({ totalCurrentScore, totalMaxScore }: { totalCurrentScore: number; totalMaxScore: number }) => (
-    <div className="my-6 flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-xs sm:flex-row sm:items-center sm:justify-between sm:p-6">
+    <div className="my-6 flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:p-6">
         <div>
             <div className="flex items-baseline gap-2">
                 <span className="text-md font-semibold text-gray-700 sm:text-lg">Tổng điểm:</span>
@@ -378,7 +378,6 @@ const TotalScore = ({ totalCurrentScore, totalMaxScore }: { totalCurrentScore: n
                 </span>
                 <span className="text-lg font-medium text-gray-600">/ {totalMaxScore}</span>
             </div>
-            <span className="text-xs italic">Leader luôn cao hơn member tối đa là 15đ</span>
         </div>
         <span className="font-bold italic">Điểm được lưu tự động</span>
     </div>
