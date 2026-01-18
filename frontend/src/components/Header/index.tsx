@@ -57,6 +57,11 @@ const Header = () => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+    const role = (LocalStorage.getItem("role") as RoleType) || user?.roles?.[0];
+
+    useEffect(() => {
+        setCurrentRole(role);
+    }, [role]);
 
     return (
         <header className="sticky top-3 z-50 mt-6 rounded-lg border border-gray-200/60 bg-white/95 px-5 py-3.5 backdrop-blur-xl transition-all md:px-7">
@@ -83,8 +88,8 @@ const Header = () => {
                                 active={Helper.isActive(location.pathname, "/")}
                             />
                         </li>
-                        {isLogin && Helper.hasRole(user.roles, USER_ROLE.CANDIDATE) && <CandidateHeader />}
-                        {isLogin && Helper.hasRole(user.roles, USER_ROLE.ADMIN) && <AdminHeader />}
+                        {isLogin && Helper.hasRole(role, USER_ROLE.CANDIDATE) && <CandidateHeader />}
+                        {isLogin && Helper.hasRole(role, USER_ROLE.ADMIN) && <AdminHeader />}
                         <li id="teams">
                             <NavLink
                                 url="/teams"

@@ -154,7 +154,7 @@ class AdminRepository {
     };
 
     public getAllRooms = async () => {
-        return await prisma.room.findMany({
+        const rooms = await prisma.room.findMany({
             select: {
                 id: true,
                 roomNumber: true,
@@ -172,6 +172,16 @@ class AdminRepository {
                                 title: true,
                             },
                         },
+                        candidates: {
+                            select: {
+                                id: true,
+                            },
+                        },
+                        schedulePresent: {
+                            select: {
+                                googleMeetLink: true,
+                            },
+                        },
                     },
                 },
                 _count: {
@@ -179,10 +189,38 @@ class AdminRepository {
                         judgeRooms: true,
                     },
                 },
+                judgeRooms: {
+                    select: {
+                        id: true,
+                        judge: {
+                            select: {
+                                id: true,
+                            },
+                        },
+                    },
+                },
             },
-            orderBy: {
-                roomNumber: "asc",
-            },
+        });
+
+        // Sort logic giống Judge: chưa kết thúc trước, đã kết thúc sau, theo thời gian gần nhất
+        const now = new Date();
+        return rooms.sort((a, b) => {
+            const aEndTime = new Date(a.endTime);
+            const bEndTime = new Date(b.endTime);
+
+            const aEnded = aEndTime.getTime() < now.getTime();
+            const bEnded = bEndTime.getTime() < now.getTime();
+
+            if (aEnded && !bEnded) return 1;
+            if (!aEnded && bEnded) return -1;
+
+            const aTime = new Date(a.startTime);
+            const bTime = new Date(b.startTime);
+
+            const aDiff = Math.abs(aTime.getTime() - now.getTime());
+            const bDiff = Math.abs(bTime.getTime() - now.getTime());
+
+            return aDiff - bDiff;
         });
     };
 

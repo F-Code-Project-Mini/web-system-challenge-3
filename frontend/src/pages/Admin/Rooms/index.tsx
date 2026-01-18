@@ -4,10 +4,9 @@ import Loading from "~/components/Loading";
 import AddJudgeDialog from "./AddJudgeDialog";
 import { Trash2, Clock, ChevronDown, ChevronUp, CheckCircle2, XCircle } from "lucide-react";
 import Helper from "~/utils/helper";
-import type { AdminRoomType, AdminRoomDetailType } from "~/types/admin.types";
+import type { AdminRoomType } from "~/types/admin.types";
 import Notification from "~/utils/notification";
 import { useState } from "react";
-import { Badge } from "~/components/ui/badge";
 
 const RoomsPage = () => {
     const queryClient = useQueryClient();
@@ -56,65 +55,58 @@ const RoomsPage = () => {
         setExpandedRoomId(expandedRoomId === roomId ? null : roomId);
     };
 
-    const getPhaseBadge = (phase: string) => {
-        if (phase === "TRIAL") {
-            return <Badge className="border-blue-200 bg-blue-100 text-blue-700">Present Thử</Badge>;
-        }
-        return <Badge className="border-green-200 bg-green-100 text-green-700">Present Thật</Badge>;
-    };
-
-    const getModeBadge = (mode: string) => {
-        if (mode === "ONLINE") {
-            return <Badge className="border-purple-200 bg-purple-100 text-purple-700">Online</Badge>;
-        }
-        return <Badge className="border-orange-200 bg-orange-100 text-orange-700">Offline</Badge>;
-    };
-
     if (isLoading) return <Loading />;
 
     return (
         <div className="container mx-auto py-6">
             <div className="overflow-hidden rounded-lg border border-gray-200/70 bg-white shadow-xs">
-                <div className="border-b border-gray-200/70 bg-gradient-to-r from-teal-50/80 to-cyan-50/50 px-5 py-4">
-                    <h2 className="text-lg font-semibold text-gray-900">Danh sách Phòng Chấm ({rooms?.length || 0})</h2>
-                </div>
                 <div className="divide-y divide-gray-200/60">
                     {rooms?.map((room: AdminRoomType) => {
                         const isExpanded = expandedRoomId === room.id;
                         const detail = isExpanded ? roomDetail : null;
+                        const { color, text } = Helper.formatTimeUntil(room.startTime);
 
                         return (
                             <div key={room.id} className="px-5 py-5 hover:bg-gray-50/30">
                                 <div className="mb-3 flex items-start justify-between">
                                     <div className="flex-1">
-                                        <div className="mb-2 flex flex-wrap items-center gap-2">
-                                            <h3 className="text-base font-semibold text-gray-900">
-                                                Phòng {room.roomNumber}
-                                            </h3>
-                                            {getPhaseBadge(room.presentPhase)}
-                                            {getModeBadge(room.modePresent)}
-                                        </div>
-                                        {room.team && (
-                                            <h4 className="mb-2 text-sm text-gray-700">
-                                                [NHÓM <span className="font-semibold">{room.team?.group}</span>] -{" "}
+                                        <div className="mb-2 flex flex-col gap-2 text-sm font-medium">
+                                            <h2 className="text-base font-medium tracking-tight text-gray-900">
+                                                [NHÓM{" "}
+                                                <span className="text-primary font-medium">{room.team?.group}</span>] -{" "}
                                                 {room.team?.name ? (
-                                                    <span className="font-semibold">{room.team.name}</span>
+                                                    <span className="text-primary font-medium">{room.team.name}</span>
                                                 ) : (
-                                                    <span className="text-red-500">Chưa đặt tên</span>
+                                                    <span className="text-red-500">Chưa đặt tên nhóm</span>
                                                 )}
-                                                {room.team?.topic && (
-                                                    <span className="ml-2 text-xs text-gray-500">
-                                                        ({room.team.topic.title})
-                                                    </span>
-                                                )}
-                                            </h4>
-                                        )}
-                                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                                            <Clock className="h-3.5 w-3.5" />
-                                            <span>
-                                                {Helper.formatDateTime(room.startTime)} -{" "}
-                                                {Helper.formatDateTime(room.endTime)}
+                                            </h2>
+                                            <span className="text-xs italic">
+                                                Đề tài:{" "}
+                                                <span className="text-primary">
+                                                    {room.team?.topic?.title || "Chưa có đề tài"}
+                                                </span>
                                             </span>
+                                        </div>
+
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex items-center gap-1 text-xs" style={{ color }}>
+                                                <Clock className="h-3.5 w-3.5" />
+                                                <span className="font-bold">{text}</span>
+                                                <span className="text-gray-500">
+                                                    - {Helper.formatDateTime(room.startTime)}
+                                                </span>
+                                            </div>
+                                            {room.teamScore !== null && (
+                                                <div className="flex items-center gap-1 text-sm">
+                                                    <span className="text-gray-500">Điểm:</span>
+                                                    <span className="font-bold text-green-600">
+                                                        {room.teamScore.toFixed(1)}
+                                                    </span>
+                                                    <span className="text-xs text-gray-400">
+                                                        ({room.presentPhase === "TRIAL" ? "Tổng" : "TB"})
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="flex gap-2">

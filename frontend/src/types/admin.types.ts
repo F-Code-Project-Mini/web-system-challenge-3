@@ -103,10 +103,17 @@ export interface AdminRoomType {
         group: number;
         name?: string;
         topic?: { title: string };
+        candidates: Array<{
+            id: string;
+        }>;
+        schedulePresent?: {
+            googleMeetLink: string;
+        };
     };
     _count: {
         judgeRooms: number;
     };
+    teamScore: number | null;
 }
 
 export interface AdminRoomDetailType {
