@@ -2,7 +2,6 @@ import type {
     AddJudgeToRoomRequest,
     AddRoleRequest,
     AdminRoomType,
-    AdminUserDetailType,
     AdminUserType,
     CreateUserRequest,
     CreateUserResponse,
@@ -17,10 +16,10 @@ class AdminApi {
         return res.data;
     }
 
-    static async getUserById(userId: string) {
-        const res = await privateApi.get<ResponseDetailData<AdminUserDetailType>>(`/admin/users/${userId}`);
-        return res.data;
-    }
+    // static async getUserById(userId: string) {
+    //     const res = await privateApi.get<ResponseDetailData<AdminUserDetailType>>(`/admin/users/${userId}`);
+    //     return res.data;
+    // }
 
     static async createUser(data: CreateUserRequest) {
         const res = await privateApi.post<ResponseDetailData<CreateUserResponse>>("/admin/users", data);

@@ -1,14 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import AdminApi from "~/api-requests/admin.requests";
 import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import AddUserDialog from "./AddUserDialog";
-import { useNavigate } from "react-router";
 import Loading from "~/components/Loading";
 import type { AdminUserType } from "~/types/admin.types";
 import type { RoleType } from "~/types/user.types";
 import Helper from "~/utils/helper";
+import BadgeRole from "~/components/BadgeRole";
 
 const roleColors: Record<RoleType, string> = {
     CANDIDATE: "bg-blue-100 text-blue-800",
@@ -19,8 +18,6 @@ const roleColors: Record<RoleType, string> = {
 };
 
 const UsersPage = () => {
-    const navigate = useNavigate();
-
     const { data: users, isLoading } = useQuery({
         queryKey: ["admin", "users"],
         queryFn: async () => {
@@ -43,7 +40,7 @@ const UsersPage = () => {
                 <div className="flex items-center justify-between">
                     <div>
                         <h3 className="text-base font-semibold tracking-tight text-gray-900 sm:text-lg">
-                            Danh sách Users ({filteredUsers.length})
+                            Danh sách Users
                         </h3>
                         <p className="mt-1.5 text-xs leading-relaxed text-gray-500 sm:text-sm">
                             Quản lý users và phân quyền trong hệ thống
@@ -71,9 +68,6 @@ const UsersPage = () => {
                             <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
                                 Thông tin
                             </th>
-                            <th className="px-4 py-3 text-center text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
-                                Thao tác
-                            </th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200/60 bg-white">
@@ -97,15 +91,7 @@ const UsersPage = () => {
                                     <td className="px-4 py-3.5 text-sm sm:px-6 sm:py-4">
                                         <div className="flex flex-wrap gap-1">
                                             {user.roles.length > 0 ? (
-                                                user.roles.map((role) => (
-                                                    <Badge
-                                                        key={role}
-                                                        className={`${roleColors[role]} text-xs`}
-                                                        variant="secondary"
-                                                    >
-                                                        {Helper.getRoleName(role)}
-                                                    </Badge>
-                                                ))
+                                                user.roles.map((role) => <BadgeRole key={role} role={role} />)
                                             ) : (
                                                 <span className="text-xs text-gray-400">Chưa có role</span>
                                             )}
@@ -127,15 +113,6 @@ const UsersPage = () => {
                                         ) : (
                                             <span className="text-xs text-gray-400">-</span>
                                         )}
-                                    </td>
-                                    <td className="px-4 py-3.5 text-center text-sm sm:px-6 sm:py-4">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => navigate(`/admin/users/${user.id}`)}
-                                        >
-                                            Chi tiết
-                                        </Button>
                                     </td>
                                 </tr>
                             );

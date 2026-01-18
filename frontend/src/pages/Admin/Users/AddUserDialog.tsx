@@ -35,22 +35,10 @@ const AddUserDialog = () => {
     const createUserMutation = useMutation({
         mutationFn: (data: { email: string; fullName: string }) => AdminApi.createUser(data),
         onSuccess: async (response) => {
-            if (selectedRole) {
-                try {
-                    await AdminApi.addRoleToUser(response.result.id, { role: selectedRole });
-                    Notification.success({
-                        text: `Tạo user thành công! Password mặc định: ${response.result.defaultPassword}`,
-                    });
-                } catch {
-                    Notification.error({
-                        text: `Tạo user thành công nhưng thêm role thất bại. Password: ${response.result.defaultPassword}`,
-                    });
-                }
-            } else {
-                Notification.success({
-                    text: `Tạo user thành công! Password mặc định: ${response.result.defaultPassword}`,
-                });
-            }
+            await AdminApi.addRoleToUser(response.result.id, { role: selectedRole });
+            Notification.success({
+                text: `Tạo user thành công!`,
+            });
             queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
             setOpen(false);
             setEmail("");
@@ -85,6 +73,16 @@ const AddUserDialog = () => {
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
+                            <Label htmlFor="fullName">Họ và tên</Label>
+                            <Input
+                                id="fullName"
+                                placeholder="Nguyễn Văn A"
+                                value={fullName}
+                                onChange={(e) => setFullName(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
                             <Input
                                 id="email"
@@ -95,16 +93,7 @@ const AddUserDialog = () => {
                                 required
                             />
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="fullName">Họ và tên</Label>
-                            <Input
-                                id="fullName"
-                                placeholder="Nguyễn Văn A"
-                                value={fullName}
-                                onChange={(e) => setFullName(e.target.value)}
-                                required
-                            />
-                        </div>
+
                         <div className="grid gap-2">
                             <Label htmlFor="role">Role</Label>
                             <Select value={selectedRole} onValueChange={(value) => setSelectedRole(value as RoleType)}>
