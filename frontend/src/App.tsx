@@ -17,7 +17,6 @@ import AdminPage from "./pages/Admin";
 import ReportsPage from "./pages/Admin/Reports";
 import CandidatePages from "./pages/Admin/Candidates";
 import AdminUsersPage from "./pages/Admin/Users";
-import AdminUserDetailPage from "./pages/Admin/Users/UserDetail";
 import AdminRoomsPage from "./pages/Admin/Rooms";
 import AdminTeamsPage from "./pages/Admin/Teams/TeamsPage";
 import TeamPage from "./pages/Teams";
@@ -51,7 +50,6 @@ const App = () => {
                     <Route path="admin" element={<ProtectedRoute roleAccess={[USER_ROLE.ADMIN]} />}>
                         <Route index element={<AdminPage />} />
                         <Route path="users" element={<AdminUsersPage />} />
-                        <Route path="users/:id" element={<AdminUserDetailPage />} />
                         <Route path="rooms" element={<AdminRoomsPage />} />
                         <Route path="teams" element={<AdminTeamsPage />} />
                         <Route path="reports" element={<ReportsPage />} />
