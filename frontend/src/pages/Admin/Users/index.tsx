@@ -1,21 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import AdminApi from "~/api-requests/admin.requests";
-import { Badge } from "~/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import AddUserDialog from "./AddUserDialog";
 import Loading from "~/components/Loading";
 import type { AdminUserType } from "~/types/admin.types";
 import type { RoleType } from "~/types/user.types";
-import Helper from "~/utils/helper";
 import BadgeRole from "~/components/BadgeRole";
-
-const roleColors: Record<RoleType, string> = {
-    CANDIDATE: "bg-blue-100 text-blue-800",
-    MENTOR: "bg-green-100 text-green-800",
-    JUDGE: "bg-purple-100 text-purple-800",
-    HOST: "bg-yellow-100 text-yellow-800",
-    ADMIN: "bg-red-100 text-red-800",
-};
 
 const UsersPage = () => {
     const { data: users, isLoading } = useQuery({

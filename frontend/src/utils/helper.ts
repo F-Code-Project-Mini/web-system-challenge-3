@@ -172,6 +172,5 @@ class Helper {
         }
     };
 
-    static 
 }
 export default Helper;
