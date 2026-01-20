@@ -21,6 +21,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "~/components/ui/select";
+import Notification from "~/utils/notification";
 
 const Header = () => {
     const location = useLocation();
@@ -42,7 +43,10 @@ const Header = () => {
     const handleSwitchRole = (role: RoleType) => {
         LocalStorage.setItem("role", role);
         setCurrentRole(role);
-        window.location.href = "/";
+        Notification.success({ text: `Chuyển sang quyền ${role}` });
+        setTimeout(() => {
+            window.location.href = "/";
+        }, 500);
     };
 
     useEffect(() => {

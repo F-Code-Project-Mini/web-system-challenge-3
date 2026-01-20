@@ -18,5 +18,11 @@ class Notification {
             description: text,
         });
     }
+
+    static warning({ text = "Cảnh báo!", title = "Chú ý" }: NotifiProps) {
+        return toast.warning(title, {
+            description: text,
+        });
+    }
 }
 export default Notification;
