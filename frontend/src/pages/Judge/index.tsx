@@ -1,4 +1,4 @@
-import { Sparkles, Video } from "lucide-react";
+import { Presentation, Sparkles, Video } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "~/components/ui/button";
 import WelcomePartition from "~/components/WelcomePartition";
@@ -125,17 +125,37 @@ const JudgePage = () => {
                                                 <td className="px-4 py-3.5 text-sm text-gray-600 sm:px-6 sm:py-4">
                                                     {room.team?.schedulePresent?.googleMeetLink ? (
                                                         ["urgent", "expired"].includes(status) ? (
-                                                            <Badge asChild className="bg-teal-600 text-white">
-                                                                <a
-                                                                    href={room.team.schedulePresent.googleMeetLink}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="flex items-center gap-1.5"
-                                                                >
-                                                                    <Video size={14} />
-                                                                    <span>Tham gia</span>
-                                                                </a>
-                                                            </Badge>
+                                                            <div className="flex flex-col gap-1">
+                                                                {room.team.schedulePresent.videoRecord ? (
+                                                                    <Badge asChild>
+                                                                        <a
+                                                                            href={
+                                                                                room.team.schedulePresent.googleMeetLink
+                                                                            }
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="flex items-center gap-1.5"
+                                                                        >
+                                                                            <Video size={14} />
+                                                                            <span>Xem lại record</span>
+                                                                        </a>
+                                                                    </Badge>
+                                                                ) : (
+                                                                    <Badge asChild className="bg-teal-600 text-white">
+                                                                        <a
+                                                                            href={
+                                                                                room.team.schedulePresent.googleMeetLink
+                                                                            }
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="flex items-center gap-1.5"
+                                                                        >
+                                                                            <Presentation size={14} />
+                                                                            <span>Tham gia</span>
+                                                                        </a>
+                                                                    </Badge>
+                                                                )}
+                                                            </div>
                                                         ) : (
                                                             <span className="text-center text-xs text-gray-400 italic">
                                                                 Chưa đến giờ

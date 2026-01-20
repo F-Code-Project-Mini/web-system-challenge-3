@@ -19,6 +19,7 @@ export type RoomType = {
         };
         schedulePresent: {
             googleMeetLink: string;
+            videoRecord: string;
         } | null;
     } | null;
 };
