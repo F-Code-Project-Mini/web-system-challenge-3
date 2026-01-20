@@ -3,7 +3,7 @@ import { Note } from "./Note";
 import { useQuery } from "@tanstack/react-query";
 import JudgeApi from "~/api-requests/judge.requests";
 import TeamApi from "~/api-requests/team.requests";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { socket } from "~/utils/socket";
 import useAuth from "~/hooks/useAuth";
 import type { CandidateType } from "~/types/team.types";
@@ -223,11 +223,14 @@ const JudgeBaremPage = () => {
                             Vui lòng nhập điểm cho từng tiêu chí dưới đây
                         </p>
                     </div>
-                    <div className="flex justify-between px-4 py-4">
+                    <div className="flex justify-center gap-2 px-4 py-4">
                         <ShowResume
                             urlPdf={candidateActive?.resume?.filePath || ""}
                             name={candidateActive?.user.fullName || ""}
                         />
+                        <Button asChild>
+                            <Link to={`/judge/team/${params.id}/room`}>Xem nhận xét Challenge 2</Link>
+                        </Button>
                     </div>
                     <Button
                         onClick={() => setScaleBarem(!scaleBarem)}
