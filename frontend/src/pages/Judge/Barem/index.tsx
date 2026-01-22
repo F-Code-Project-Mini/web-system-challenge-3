@@ -222,21 +222,31 @@ const JudgeBaremPage = () => {
                             Vui lòng nhập điểm cho từng tiêu chí dưới đây
                         </p>
                     </div>
-                    <div className="flex flex-col justify-center gap-2 px-4 py-4">
-                        <div>
-                            <h3>Nhận xét các vòng trước</h3>
+                    <div className="flex justify-between gap-2 px-4 py-4">
+                        <div className="flex flex-col gap-1">
+                            <div>
+                                <h3 className="text-left">Nhận xét các vòng trước</h3>
+                            </div>
+                            <div className="flex gap-2">
+                                <ShowResume
+                                    urlPdf={candidateActive?.resume?.filePath || ""}
+                                    name={candidateActive?.user.fullName || ""}
+                                />
+                                <Button asChild>
+                                    <Link to={candidateActive?.interview?.filePath || ""} target="_blank">
+                                        <MessageCircle /> Nhận xét Challenge 2
+                                    </Link>
+                                </Button>
+                            </div>
                         </div>
-                        <div className="flex gap-2">
-                            <ShowResume
-                                urlPdf={candidateActive?.resume?.filePath || ""}
-                                name={candidateActive?.user.fullName || ""}
-                            />
-                            <Button asChild>
-                                <Link to={candidateActive?.interview?.filePath || ""} target="_blank">
-                                    <MessageCircle /> Nhận xét Challenge 2
-                                </Link>
-                            </Button>
-                        </div>
+                        {/* <div className="flex flex-col gap-1">
+                            <div>
+                                <h3 className="text-right">Thao tác</h3>
+                            </div>
+                            <div className="flex gap-2">
+                                <Button variant={"secondary"}>Reset điểm</Button>
+                            </div>
+                        </div> */}
                     </div>
                     <Button
                         onClick={() => setScaleBarem(!scaleBarem)}
@@ -327,7 +337,7 @@ const JudgeBaremPage = () => {
                                                             <div
                                                                 className={`text-sm leading-relaxed ${isInvalidScore ? "text-red-600" : "text-gray-700"}`}
                                                                 dangerouslySetInnerHTML={{
-                                                                    __html: `${subPart.description}` || "—",
+                                                                    __html: `${subPart.description}`,
                                                                 }}
                                                             />
                                                         </div>

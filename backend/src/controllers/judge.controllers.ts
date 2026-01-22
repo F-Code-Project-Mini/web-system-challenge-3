@@ -42,7 +42,7 @@ const processPartition = async (partition: any, judgeId: string, candidateId: st
     return await enrichPartitionWithScore(partition, judgeId, candidateId);
 };
 
-const processBaremItem = async (item: any, judgeId: string, roomId: string, candidateId: string) => {
+const processBaremItem = async (item: any, judgeId: string, candidateId: string) => {
     const partitions = await Promise.all(
         item.partitions.map((partition: any) => processPartition(partition, judgeId, candidateId)),
     );
@@ -81,9 +81,9 @@ export const getBarem = async (
     try {
         const { candidateId, roomId = "" } = req.params;
         const judgeId = req.userId!;
-        const result = await Promise.all(
-            judgeBaremTrial.map((item) => processBaremItem(item, judgeId, roomId, candidateId)),
-        );
+        const room = await judgeService.getDetailRoom(roomId);
+        const barem = room?.modePresent === "ONLINE" ? judgeBaremTrial : judgeBaremOfficial;
+        const result = await Promise.all(barem.map((item) => processBaremItem(item, judgeId, candidateId)));
         return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
     } catch (error) {
         return next(error);
