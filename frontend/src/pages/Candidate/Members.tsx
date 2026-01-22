@@ -18,7 +18,7 @@ const Members = ({ data }: { data: TeamType | undefined }) => {
                 />
             )}
             <div className="overflow-hidden rounded-lg border border-gray-200/70 bg-white shadow-xs transition-all">
-                <div className="border-b border-gray-200/70 bg-gradient-to-r from-gray-50/80 to-white px-5 py-4 sm:px-6 sm:py-5">
+                <div className="border-b border-gray-200/70 bg-linear-to-r from-gray-50/80 to-white px-5 py-4 sm:px-6 sm:py-5">
                     <div className="flex items-center justify-between">
                         <div className="flex-1">
                             <div className="flex items-center gap-2">
