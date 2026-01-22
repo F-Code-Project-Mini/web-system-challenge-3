@@ -76,6 +76,7 @@ export const createSubmission = async (
     res: Response,
     next: NextFunction,
 ) => {
+    return res.status(HTTP_STATUS.BAD_REQUEST).json(new ResponseClient({ message: "Đã ngừng nhận nộp sản phẩm" }));
     try {
         const userId = req.userId!;
         const { slideLink, taskAssignmentLink, productLinks, note } = req.body;
