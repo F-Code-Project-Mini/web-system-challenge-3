@@ -1,211 +1,53 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import { Note } from "./Note";
-import { useQuery } from "@tanstack/react-query";
-import JudgeApi from "~/api-requests/judge.requests";
-import TeamApi from "~/api-requests/team.requests";
-import { Link, useParams } from "react-router";
-import { socket } from "~/utils/socket";
-import useAuth from "~/hooks/useAuth";
-import type { CandidateType } from "~/types/team.types";
-import { BadgeCheck, MessageCircle, ZoomIn, ZoomOut } from "lucide-react";
-import BadgeLeader from "~/components/BadgeLeader";
-import Notification from "./Notification";
+import { BadgeCheck, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { ShowResume } from "~/components/ShowResume";
-import { ShowCandidates } from "./ShowCandidates";
-import BaremTeam from "./Team";
-type ParamsBarem = {
-    id: string;
-    roomId: string;
-    candidateId?: string;
+import type { CandidateType } from "~/types/team.types";
+
+type BaremJudgeType = {
+    target: string;
+    partitions: {
+        criteria: string;
+        partitions?: {
+            code: string;
+            description: string;
+            maxScore: number;
+            scoreCurrent?: number;
+            note?: string;
+        }[];
+    }[];
 };
-const JudgeBaremPage = () => {
-    const params = useParams<ParamsBarem>();
 
-    const { user } = useAuth();
+interface BaremTeamProps {
+    scaleBarem: boolean;
+    setScaleBarem: (value: boolean) => void;
+    baremJudge: BaremJudgeType[] | undefined;
+    isLeader: boolean;
+    scores: { [key: string]: number };
+    handleScoreChange: (key: string, value: string) => void;
+    notes: { [key: string]: string };
+    handleNoteChange: (key: string, note: string) => void;
+    candidateActive: CandidateType | undefined;
+    totalCurrentScore: number;
+    totalMaxScore: number;
+}
 
-    const [scaleBarem, setScaleBarem] = useState(false);
-    const [scores, setScores] = useState<{ [key: string]: number }>({});
-    const [notes, setNotes] = useState<{ [key: string]: string }>({});
-    const isDataInitialized = useRef(false);
-
-    const debounceMapRef = useRef<Record<string, number>>({});
-    const debounceNoteMapRef = useRef<Record<string, number>>({});
-
-    const { data: candidates } = useQuery({
-        queryKey: ["judge", "get-team", params.id],
-        queryFn: async () => {
-            const res = await TeamApi.getTeamById(params.id || "");
-            return res.result;
-        },
-        enabled: !!params.id,
-    });
-    const isLeader = params?.candidateId === candidates?.leader?.id;
-
-    const [candidateActive, setcandidateActive] = useState<CandidateType | undefined>(undefined);
-
-    useEffect(() => {
-        if (!candidateActive && candidates?.candidates?.length) {
-            setcandidateActive(
-                candidates.candidates.find((c) => c.id === params.candidateId) || candidates.candidates[0],
-            );
-            // reset scores and cell status when candidate changes
-        }
-        // Reset flag khi chuyển candidate
-        isDataInitialized.current = false;
-    }, [candidates, candidateActive, params.candidateId]);
-
-    const { data: baremJudge } = useQuery({
-        queryKey: ["judge-barem", candidateActive, params.candidateId, params.roomId],
-        queryFn: async () => {
-            const res = await JudgeApi.getBarem(candidateActive?.id || "", params.roomId || "");
-            return res.result;
-        },
-        enabled: !!candidateActive,
-    });
-
-    // Reset lại data (k reset chuyển cái khác nó vẫn giữ lại data cũ của ứng viên khác)
-    useEffect(() => {
-        if (!baremJudge) return;
-
-        const newScores: { [key: string]: number } = {};
-        const newNotes: { [key: string]: string } = {};
-        baremJudge.forEach((item) => {
-            item.partitions.forEach((partition, partitionIndex) => {
-                partition.partitions?.forEach((subPart, subIndex) => {
-                    const scoreKey = `${item.target}-${partitionIndex}-${subIndex}`;
-                    if (subPart.scoreCurrent !== undefined && subPart.scoreCurrent !== null) {
-                        newScores[scoreKey] = subPart.scoreCurrent;
-                    }
-
-                    if (subPart.note !== undefined && subPart.note !== null) {
-                        newNotes[scoreKey] = subPart.note;
-                    }
-                });
-            });
-        });
-
-        setScores(newScores);
-        setNotes(newNotes);
-
-        // Đánh dấu data đã được initialized để tránh emit socket không cần thiết
-        setTimeout(() => {
-            isDataInitialized.current = true;
-        }, 100);
-    }, [baremJudge]);
-
-    const totalMaxScore =
-        baremJudge?.reduce((sum, item) => {
-            if (!isLeader && item.target == "Leader") {
-                return sum;
-            }
-            return (
-                sum +
-                item.partitions.reduce((partSum, partition) => {
-                    return (
-                        partSum + (partition.partitions?.reduce((subSum, subPart) => subSum + subPart.maxScore, 0) || 0)
-                    );
-                }, 0)
-            );
-        }, 0) ?? 0;
-
-    const totalCurrentScore = Object.values(scores).reduce((sum, score) => sum + (score || 0), 0);
-
-    const handleScoreChange = (key: string, value: string) => {
-        const num = parseFloat(value);
-
-        setScores((prev) => ({
-            ...prev,
-            [key]: isNaN(num) ? 0 : num,
-        }));
-    };
-    const handleNoteChange = useCallback((key: string, note: string) => {
-        setNotes((prev) => ({
-            ...prev,
-            [key]: note,
-        }));
-    }, []);
-
-    useEffect(() => {
-        if (!socket.connected) socket.connect();
-
-        return () => {
-            socket.disconnect();
-        };
-    }, []);
-
-    // useEffect riêng cho scores
-    useEffect(() => {
-        if (!baremJudge || !candidateActive || !isDataInitialized.current) return;
-
-        Object.entries(scores).forEach(([key, score]) => {
-            const [target, partitionIndex, subIndex] = key.split("-");
-            const partition = baremJudge?.find((item) => item.target === target)?.partitions[Number(partitionIndex)];
-            const subPart = partition?.partitions?.[Number(subIndex)];
-
-            if (!subPart) return;
-
-            if (debounceMapRef.current[subPart.code]) {
-                clearTimeout(debounceMapRef.current[subPart.code]);
-            }
-
-            debounceMapRef.current[subPart.code] = setTimeout(() => {
-                socket.emit("SAVE_SCORE", {
-                    role: "JUDGE",
-                    type: "TRIAL_PRESENTATION",
-                    mentorId: user.id,
-                    candidateId: candidateActive.id,
-                    codeBarem: subPart.code,
-                    score,
-                    note: notes[key] || "",
-                });
-            }, 500);
-        });
-    }, [scores, baremJudge, candidateActive, user.id, notes]);
-
-    // useEffect riêng cho notes
-    useEffect(() => {
-        if (!baremJudge || !candidateActive || !isDataInitialized.current) return;
-
-        Object.entries(notes).forEach(([key, note]) => {
-            const [target, partitionIndex, subIndex] = key.split("-");
-            const partition = baremJudge?.find((item) => item.target === target)?.partitions[Number(partitionIndex)];
-            const subPart = partition?.partitions?.[Number(subIndex)];
-
-            if (!subPart) return;
-
-            if (debounceNoteMapRef.current[subPart.code]) {
-                clearTimeout(debounceNoteMapRef.current[subPart.code]);
-            }
-
-            debounceNoteMapRef.current[subPart.code] = setTimeout(() => {
-                socket.emit("SAVE_SCORE", {
-                    role: "JUDGE",
-                    type: "TRIAL_PRESENTATION",
-                    mentorId: user.id,
-                    candidateId: candidateActive.id,
-                    codeBarem: subPart.code,
-                    score: scores[key] || 0,
-                    note: note,
-                });
-            }, 500);
-        });
-    }, [notes, baremJudge, candidateActive, user.id, scores]);
-
+const BaremTeam = ({
+    scaleBarem,
+    setScaleBarem,
+    baremJudge,
+    isLeader,
+    scores,
+    handleScoreChange,
+    notes,
+    handleNoteChange,
+    candidateActive,
+    totalCurrentScore,
+    totalMaxScore,
+}: BaremTeamProps) => {
     return (
-        <section className="px-4 sm:px-0">
-            <div className="mb-6 sm:mb-8">
-                <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Chấm điểm Present</h1>
-                <p className="mt-2 text-sm text-gray-600">Vui lòng chọn ứng viên và điền điểm cho từng tiêu chí</p>
-            </div>
-            <Notification />
-
-            <ShowCandidates
-                candidates={candidates}
-                candidateActive={candidateActive}
-                setcandidateActive={setcandidateActive}
-            />
-            <h3 className="text-primary mt-6 text-2xl font-bold italic">1/2. Bảng điểm cá nhân</h3>
+        <div>
+            <hr />
+            <h3 className="text-primary mt-20 text-2xl font-bold italic">2/2. Bảng điểm cả nhóm</h3>
             <section
                 className={`relative left-1/2 mt-2 mb-6 -translate-x-1/2 ${scaleBarem ? "md:w-[95vw] xl:w-[98vw]" : ""}`}
                 id="barem-table"
@@ -214,41 +56,14 @@ const JudgeBaremPage = () => {
                     <div className="border-b border-gray-200 bg-linear-to-r from-gray-50 to-white px-4 py-4 sm:px-6">
                         <div className="flex items-center gap-2">
                             <h2 className="text-base font-bold text-gray-900 sm:text-lg">
-                                [CÁ NHÂN] ỨNG VIÊN:{" "}
-                                <span className="text-primary">{candidateActive?.user.fullName}</span>
+                                [CẢ NHÓM] BẢNG ĐIỂM DÀNH CHO CẢ NHÓM
                             </h2>
-                            {isLeader && <BadgeLeader />}
                         </div>
                         <p className="mt-1 text-xs text-gray-500 sm:text-sm">
                             Vui lòng nhập điểm cho từng tiêu chí dưới đây
                         </p>
                     </div>
-                    <div className="flex justify-between gap-2 px-4 py-4">
-                        <div className="flex flex-col gap-1">
-                            <div className="mb-2">
-                                <h3 className="text-left">Tài nguyên các vòng trước</h3>
-                            </div>
-                            <div className="flex gap-2">
-                                <ShowResume
-                                    urlPdf={candidateActive?.resume?.filePath || ""}
-                                    name={candidateActive?.user.fullName || ""}
-                                />
-                                <Button asChild>
-                                    <Link to={candidateActive?.interview?.filePath || ""} target="_blank">
-                                        <MessageCircle /> Challenge 2
-                                    </Link>
-                                </Button>
-                            </div>
-                        </div>
-                        {/* <div className="flex flex-col gap-1">
-                            <div>
-                                <h3 className="text-right">Thao tác</h3>
-                            </div>
-                            <div className="flex gap-2">
-                                <Button variant={"secondary"}>Reset điểm</Button>
-                            </div>
-                        </div> */}
-                    </div>
+
                     <Button
                         onClick={() => setScaleBarem(!scaleBarem)}
                         className="absolute top-4 right-4 z-10 h-8 w-8 rounded-full p-0 text-gray-600 text-white hover:bg-gray-100"
@@ -388,23 +203,8 @@ const JudgeBaremPage = () => {
                     </div>
                 </div>
             </section>
-
             <TotalScore totalCurrentScore={totalCurrentScore} totalMaxScore={totalMaxScore} />
-
-            <BaremTeam
-                scaleBarem={scaleBarem}
-                setScaleBarem={setScaleBarem}
-                baremJudge={baremJudge}
-                isLeader={isLeader}
-                scores={scores}
-                handleScoreChange={handleScoreChange}
-                notes={notes}
-                handleNoteChange={handleNoteChange}
-                candidateActive={candidateActive}
-                totalCurrentScore={totalCurrentScore}
-                totalMaxScore={totalMaxScore}
-            />
-        </section>
+        </div>
     );
 };
 
@@ -426,4 +226,5 @@ const TotalScore = ({ totalCurrentScore, totalMaxScore }: { totalCurrentScore: n
         <span className="font-bold italic">Điểm được lưu tự động</span>
     </div>
 );
-export default JudgeBaremPage;
+
+export default BaremTeam;
