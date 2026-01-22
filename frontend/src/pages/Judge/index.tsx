@@ -215,7 +215,7 @@ const DisplayInfoGoogleMeet = ({ room, status }: { room: RoomType; status: strin
                                 </a>
                             </Badge>
                         ) : (
-                            ""
+                            "Chỉ dành cho thí sinh không tham dự trực tiếp"
                         )}
                     </div>
                 ) : (
