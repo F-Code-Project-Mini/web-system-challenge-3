@@ -38,6 +38,10 @@ const JudgeBaremPage = () => {
     const debounceMapRef = useRef<Record<string, number>>({});
     const debounceNoteMapRef = useRef<Record<string, number>>({});
 
+    // Debounce refs riêng cho Team
+    const debounceMapTeamRef = useRef<Record<string, number>>({});
+    const debounceNoteTeamMapRef = useRef<Record<string, number>>({});
+
     const { data: candidates } = useQuery({
         queryKey: ["judge", "get-team", params.id],
         queryFn: async () => {
@@ -77,6 +81,7 @@ const JudgeBaremPage = () => {
         },
         enabled: !!params.id,
     });
+    const leaderId = candidates?.leader?.id || "";
 
     // Reset lại data (k reset chuyển cái khác nó vẫn giữ lại data cũ của ứng viên khác)
     useEffect(() => {
@@ -231,7 +236,7 @@ const JudgeBaremPage = () => {
             debounceMapRef.current[subPart.code] = setTimeout(() => {
                 socket.emit("SAVE_SCORE", {
                     role: "JUDGE",
-                    type: "TRIAL_PRESENTATION",
+                    type: "OFFICIAL_PRESENTATION",
                     mentorId: user.id,
                     candidateId: candidateActive.id,
                     codeBarem: subPart.code,
@@ -262,7 +267,7 @@ const JudgeBaremPage = () => {
             debounceNoteMapRef.current[subPart.code] = setTimeout(() => {
                 socket.emit("SAVE_SCORE", {
                     role: "JUDGE",
-                    type: "TRIAL_PRESENTATION",
+                    type: "OFFICIAL_PRESENTATION",
                     mentorId: user.id,
                     candidateId: candidateActive.id,
                     codeBarem: subPart.code,
@@ -278,28 +283,40 @@ const JudgeBaremPage = () => {
         if (!baremJudgeTeam || !isDataInitializedTeam.current) return;
 
         Object.entries(scoresTeam).forEach(([key, score]) => {
-            const keyParts = key.split("-");
-            const target = keyParts.slice(1, -2).join("-");
-            const partitionIndex = keyParts[keyParts.length - 2];
+            const keyWithoutPrefix = key.replace("team-", "");
+            const keyParts = keyWithoutPrefix.split("-");
+
             const subIndex = keyParts[keyParts.length - 1];
+            const partitionIndex = keyParts[keyParts.length - 2];
+            const target = keyParts.slice(0, -2).join("-");
+
+            console.log("Team Score Change:", { key, target, partitionIndex, subIndex });
 
             const partition = baremJudgeTeam?.find((item) => item.target === target)?.partitions[
                 Number(partitionIndex)
             ];
             const subPart = partition?.partitions?.[Number(subIndex)];
 
-            if (!subPart) return;
-
-            if (debounceMapRef.current[`team-${subPart.code}`]) {
-                clearTimeout(debounceMapRef.current[`team-${subPart.code}`]);
+            if (!subPart) {
+                console.warn("SubPart not found for team key:", key);
+                return;
             }
 
-            debounceMapRef.current[`team-${subPart.code}`] = setTimeout(() => {
+            if (debounceMapTeamRef.current[subPart.code]) {
+                clearTimeout(debounceMapTeamRef.current[subPart.code]);
+            }
+
+            debounceMapTeamRef.current[subPart.code] = setTimeout(() => {
+                console.log("Emitting SAVE_SCORE for team:", {
+                    codeBarem: subPart.code,
+                    score,
+                    teamId: params.id,
+                });
                 socket.emit("SAVE_SCORE", {
                     role: "JUDGE",
-                    type: "TRIAL_PRESENTATION",
+                    type: "OFFICIAL_PRESENTATION",
                     mentorId: user.id,
-                    teamId: params.id,
+                    candidateId: leaderId,
                     codeBarem: subPart.code,
                     score,
                     note: notesTeam[key] || "",
@@ -313,10 +330,13 @@ const JudgeBaremPage = () => {
         if (!baremJudgeTeam || !isDataInitializedTeam.current) return;
 
         Object.entries(notesTeam).forEach(([key, note]) => {
-            const keyParts = key.split("-");
-            const target = keyParts.slice(1, -2).join("-");
-            const partitionIndex = keyParts[keyParts.length - 2];
+            const keyWithoutPrefix = key.replace("team-", "");
+            const keyParts = keyWithoutPrefix.split("-");
+
             const subIndex = keyParts[keyParts.length - 1];
+            const partitionIndex = keyParts[keyParts.length - 2];
+
+            const target = keyParts.slice(0, -2).join("-");
 
             const partition = baremJudgeTeam?.find((item) => item.target === target)?.partitions[
                 Number(partitionIndex)
@@ -325,14 +345,19 @@ const JudgeBaremPage = () => {
 
             if (!subPart) return;
 
-            if (debounceNoteMapRef.current[`team-${subPart.code}`]) {
-                clearTimeout(debounceNoteMapRef.current[`team-${subPart.code}`]);
+            if (debounceNoteTeamMapRef.current[subPart.code]) {
+                clearTimeout(debounceNoteTeamMapRef.current[subPart.code]);
             }
 
-            debounceNoteMapRef.current[`team-${subPart.code}`] = setTimeout(() => {
+            debounceNoteTeamMapRef.current[subPart.code] = setTimeout(() => {
+                console.log("Emitting SAVE_SCORE for team note:", {
+                    codeBarem: subPart.code,
+                    note,
+                    teamId: params.id,
+                });
                 socket.emit("SAVE_SCORE", {
                     role: "JUDGE",
-                    type: "TRIAL_PRESENTATION",
+                    type: "OFFICIAL_PRESENTATION",
                     mentorId: user.id,
                     teamId: params.id,
                     codeBarem: subPart.code,
