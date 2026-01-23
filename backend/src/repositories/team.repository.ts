@@ -78,6 +78,7 @@ class TeamRepository {
             },
             omit: {
                 mentorNote: true,
+                reportLink: true,
             },
         });
 
@@ -139,7 +140,9 @@ class TeamRepository {
             where: { id },
             include,
             omit: {
-                ...([RoleType.MENTOR, RoleType.ADMIN].some((role) => roles.includes(role)) ? {} : { mentorNote: true }),
+                ...([RoleType.MENTOR, RoleType.JUDGE, RoleType.ADMIN].some((role) => roles.includes(role))
+                    ? {}
+                    : { mentorNote: true, reportLink: true }),
             },
         });
 

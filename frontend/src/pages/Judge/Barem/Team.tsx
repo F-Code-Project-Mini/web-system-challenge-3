@@ -28,6 +28,7 @@ interface BaremTeamProps {
     totalCurrentScore: number;
     totalMaxScore: number;
     teamId: string;
+    reportLink: string;
 }
 
 const BaremTeam = ({
@@ -41,6 +42,7 @@ const BaremTeam = ({
     totalCurrentScore,
     totalMaxScore,
     teamId,
+    reportLink,
 }: BaremTeamProps) => {
     return (
         <div>
@@ -67,7 +69,7 @@ const BaremTeam = ({
                             </div>
                             <div className="flex gap-2">
                                 <Button asChild>
-                                    <Link to={"/"} target="_blank">
+                                    <Link to={reportLink} target="_blank">
                                         <MessageCircle /> Nhận xét mentor
                                     </Link>
                                 </Button>
