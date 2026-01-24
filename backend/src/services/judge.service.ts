@@ -48,7 +48,7 @@ class JudgeService {
 
         const candidatesWithScores = await Promise.all(
             team.candidates.map(async (candidate) => {
-                const scoreJudge = await userRepository.getScoreMentor(judgeId, candidate.id, "JUDGE");
+                const scoreJudge = await userRepository.getScoreJudge(judgeId, candidate.id, "OFFICIAL_PRESENTATION");
                 return {
                     ...candidate,
                     scoreJudge,

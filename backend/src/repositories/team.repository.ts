@@ -155,15 +155,13 @@ class TeamRepository {
                 }
 
                 const scoreMentor = displayScore
-                    ? await userRepository.getScoreMentor(team.mentorship.mentor.id, candidate.id, "MENTOR")
+                    ? await userRepository.getScoreMentor(team.mentorship.mentor.id, candidate.id)
                     : null;
 
                 const scoreJudge = await userRepository.getScoreMentor(
                     team.mentorship.mentor.id,
                     candidate.id,
-                    "JUDGE",
                     "OFFICIAL_PRESENTATION",
-                    true,
                 );
                 const { password, ...userWithoutPassword } = candidate.user;
 
