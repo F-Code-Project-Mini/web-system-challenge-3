@@ -53,7 +53,40 @@ class UserRepository {
     getScoreMentor = async (
         mentorId: string = "",
         userId: string,
-        role: "JUDGE" | "MENTOR" = "MENTOR",
+
+        type: "PROCESSING" | "TRIAL_PRESENTATION" | "OFFICIAL_PRESENTATION" = "PROCESSING",
+    ) => {
+        const scores = await prisma.baremScore.findMany({
+            where: {
+                ...(mentorId ? { mentorId } : {}),
+                candidateId: userId,
+                role: "MENTOR",
+                type,
+            },
+            select: {
+                mentorId: true,
+                score: true,
+            },
+        });
+
+        if (scores.length === 0) {
+            return 0;
+        }
+
+        const uniqueMentors = new Set(scores.map((s) => s.mentorId));
+        const mentorCount = uniqueMentors.size;
+
+        const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
+
+        const averageScore = totalScore / mentorCount;
+
+        return Number(averageScore.toFixed(2));
+    };
+
+    getScoreJudge = async (
+        mentorId: string = "",
+        userId: string,
+
         type: "PROCESSING" | "TRIAL_PRESENTATION" | "OFFICIAL_PRESENTATION" = "PROCESSING",
         team: boolean = false,
     ) => {
@@ -61,7 +94,7 @@ class UserRepository {
             where: {
                 ...(mentorId ? { mentorId } : {}),
                 candidateId: userId,
-                role,
+                role: "JUDGE",
                 type,
                 codeBarem: { startsWith: team ? "#judge_official_team_" : "#judge_official_personal_" },
                 // ...(team ? { codeBarem: { startsWith: "#judge_official_team_" } } : {}),
