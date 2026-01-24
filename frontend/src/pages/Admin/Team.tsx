@@ -89,11 +89,14 @@ const Teams = ({ team: { mentorship, candidates, leader, topic, name, group } }:
                                         </td>
                                         <td className="hidden px-4 py-3.5 text-center text-sm whitespace-nowrap text-gray-900 sm:px-6 sm:py-4 md:table-cell">
                                             {candidate.scoreJudge !== null ? (
-                                                <span
-                                                    className={`font-semibold ${Helper.belowAverage(candidate.scoreJudge) ? "text-red-500" : "text-green-500"}`}
-                                                >
-                                                    {candidate.scoreJudge.toFixed(1)}
-                                                </span>
+                                                <>
+                                                    <span
+                                                        className={`font-semibold ${Helper.belowAverage(candidate.scoreJudge) ? "text-red-500" : "text-green-500"}`}
+                                                    >
+                                                        {candidate.scoreJudge.toFixed(1)}
+                                                    </span>
+                                                    <span>/100</span>
+                                                </>
                                             ) : (
                                                 <span className="text-gray-400">-</span>
                                             )}

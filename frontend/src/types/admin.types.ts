@@ -114,7 +114,7 @@ export interface AdminRoomType {
     _count: {
         judgeRooms: number;
     };
-    teamScore: number | null;
+    // teamScore: number | null;
 }
 export interface RoomDetailType {
     id: string;

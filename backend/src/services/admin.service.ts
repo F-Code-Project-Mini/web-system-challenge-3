@@ -114,17 +114,17 @@ class AdminService {
                 );
 
                 // Tính teamScore: TRIAL = tổng, OFFICIAL = trung bình
-                let teamScore = null;
-                const scoredJudges = judgeScores.filter((s) => s > 0);
-                if (scoredJudges.length > 0) {
-                    if (room.presentPhase === "TRIAL") {
-                        // TRIAL: chỉ lấy tổng điểm của judge duy nhất (không tính TB)
-                        teamScore = scoredJudges[0];
-                    } else {
-                        // OFFICIAL: tính trung bình
-                        teamScore = scoredJudges.reduce((sum, s) => sum + s, 0) / scoredJudges.length;
-                    }
-                }
+                // let teamScore = null;
+                // const scoredJudges = judgeScores.filter((s) => s > 0);
+                // if (scoredJudges.length > 0) {
+                //     if (room.presentPhase === "TRIAL") {
+                //         // TRIAL: chỉ lấy tổng điểm của judge duy nhất (không tính TB)
+                //         teamScore = scoredJudges[0];
+                //     } else {
+                //         // OFFICIAL: tính trung bình
+                //         teamScore = scoredJudges.reduce((sum, s) => sum + s, 0) / scoredJudges.length;
+                //     }
+                // }
 
                 return {
                     id: room.id,
@@ -135,7 +135,7 @@ class AdminService {
                     endTime: room.endTime,
                     team: room.team,
                     _count: room._count,
-                    teamScore,
+                    // teamScore,
                 };
             }),
         );
@@ -264,7 +264,13 @@ class AdminService {
 
                         // Lấy điểm judge (OFFICIAL_PRESENTATION)
                         // Tím judge room của team này
-                        const scoreJudge = await this.getJudgeScoresForCandidate(team.id, candidate.id);
+                        // const scoreJudge = await this.getJudgeScoresForCandidate(team.id, candidate.id);
+                        const scoreJudge = await userRepository.getScoreMentor(
+                            "",
+                            candidate.id,
+                            "JUDGE",
+                            "OFFICIAL_PRESENTATION",
+                        );
 
                         return {
                             ...candidate,
