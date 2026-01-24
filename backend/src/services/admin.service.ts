@@ -106,7 +106,7 @@ class AdminService {
                     room.judgeRooms.map(async (jr) => {
                         const candidateScores = await Promise.all(
                             room.team!.candidates.map(async (candidate) => {
-                                const score = await userRepository.getScoreMentor(jr.judge.id, candidate.id, "JUDGE");
+                                const score = await userRepository.getScoreJudge(jr.judge.id, candidate.id);
                                 return score || 0;
                             }),
                         );
@@ -166,7 +166,7 @@ class AdminService {
                 // Lấy điểm của judge này cho tất cả candidates trong team
                 const candidateScores = await Promise.all(
                     room.team!.candidates.map(async (candidate) => {
-                        const score = await userRepository.getScoreMentor(jr.judge.id, candidate.id, "JUDGE");
+                        const score = await userRepository.getScoreJudge(jr.judge.id, candidate.id);
                         return {
                             candidateId: candidate.id,
                             candidateName: candidate.user?.fullName,
@@ -255,16 +255,11 @@ class AdminService {
             teams.map(async (team) => {
                 const candidatesWithScores = await Promise.all(
                     team.candidates.map(async (candidate) => {
-                        const scoreMentor = await userRepository.getScoreMentor(
-                            team.mentorship.mentorId,
-                            candidate.id,
-                            "MENTOR",
-                        );
+                        const scoreMentor = await userRepository.getScoreMentor(team.mentorship.mentorId, candidate.id);
 
-                        const scoreJudge = await userRepository.getScoreMentor(
+                        const scoreJudge = await userRepository.getScoreJudge(
                             "",
                             candidate.id,
-                            "JUDGE",
                             "OFFICIAL_PRESENTATION",
                         );
 
@@ -362,7 +357,7 @@ class AdminService {
         // Lấy điểm từ từng judge và tính trung bình
         const scores = await Promise.all(
             roomDetail.judgeRooms.map(async (jr) => {
-                const score = await userRepository.getScoreMentor(jr.judge.id, candidateId, "JUDGE");
+                const score = await userRepository.getScoreMentor(jr.judge.id, candidateId);
                 return score || 0;
             }),
         );
