@@ -9,6 +9,8 @@ import prisma from "~/configs/prisma";
 class AdminService {
     public getAllUsers = async () => {
         const users = await adminRepository.getAllUsers();
+        console.log(users);
+
         return users;
     };
 
@@ -85,63 +87,8 @@ class AdminService {
         const rooms = await adminRepository.getAllRooms();
 
         // Thêm điểm cho mỗi phòng (không trả về judgeRooms)
-        const roomsWithScores = await Promise.all(
-            rooms.map(async (room) => {
-                if (!room.team || !room.judgeRooms || room.judgeRooms.length === 0) {
-                    return {
-                        id: room.id,
-                        roomNumber: room.roomNumber,
-                        presentPhase: room.presentPhase,
-                        modePresent: room.modePresent,
-                        startTime: room.startTime,
-                        endTime: room.endTime,
-                        team: room.team,
-                        _count: room._count,
-                        teamScore: 200,
-                    };
-                }
 
-                // Lấy điểm từ tất cả judges
-                const judgeScores = await Promise.all(
-                    room.judgeRooms.map(async (jr) => {
-                        const candidateScores = await Promise.all(
-                            room.team!.candidates.map(async (candidate) => {
-                                const score = await userRepository.getScoreJudge(jr.judge.id, candidate.id);
-                                return score || 0;
-                            }),
-                        );
-                        return candidateScores.reduce((sum, s) => sum + s, 0);
-                    }),
-                );
-
-                // Tính teamScore: TRIAL = tổng, OFFICIAL = trung bình
-                let teamScore = 200;
-                const scoredJudges = judgeScores.filter((s) => s > 0);
-                if (scoredJudges.length > 0) {
-                    if (room.presentPhase === "TRIAL") {
-                        // TRIAL: chỉ lấy tổng điểm của judge duy nhất (không tính TB)
-                        teamScore = scoredJudges[0];
-                    } else {
-                        // OFFICIAL: tính trung bình
-                        teamScore = scoredJudges.reduce((sum, s) => sum + s, 0) / scoredJudges.length;
-                    }
-                }
-
-                return {
-                    id: room.id,
-                    roomNumber: room.roomNumber,
-                    presentPhase: room.presentPhase,
-                    modePresent: room.modePresent,
-                    startTime: room.startTime,
-                    endTime: room.endTime,
-                    team: room.team,
-                    _count: room._count,
-                    teamScore,
-                };
-            }),
-        );
-
-        return roomsWithScores;
+        return rooms;
     };
 
     public getRoomDetail = async (roomId: string) => {
@@ -259,13 +206,10 @@ class AdminService {
             teams.map(async (team) => {
                 const candidatesWithScores = await Promise.all(
                     team.candidates.map(async (candidate) => {
-                        const scoreMentor = await userRepository.getScoreMentor(team.mentorship.mentorId, candidate.id);
+                        const score = await userRepository.getScoreMentor(candidate.id);
+                        const scoreMentor = score?.mentorScore || 0;
 
-                        const scoreJudge = await userRepository.getScoreJudge(
-                            "",
-                            candidate.id,
-                            "OFFICIAL_PRESENTATION",
-                        );
+                        const scoreJudge = score?.avgPresentScore || 0;
 
                         return {
                             ...candidate,
@@ -275,7 +219,7 @@ class AdminService {
                     }),
                 );
 
-                const teamScore = await this.getTeamScore(team.id);
+                const teamScore = await userRepository.getTeamScores(team.id);
 
                 return {
                     ...team,
@@ -286,89 +230,6 @@ class AdminService {
         );
 
         return teamsWithScores;
-    };
-
-    private getTeamScore = async (teamId: string): Promise<number | null> => {
-        const team = await adminRepository.getAllTeams().then((teams) => teams.find((t) => t.id === teamId));
-        if (!team || team.candidates.length === 0) {
-            return null;
-        }
-
-        const representativeCandidate = team.candidates[0];
-
-        const teamBaremScores = await prisma.baremScore.findMany({
-            where: {
-                candidateId: representativeCandidate.id,
-                role: "JUDGE",
-                codeBarem: {
-                    startsWith: "#judge_official_team_",
-                },
-            },
-            select: {
-                mentorId: true,
-                score: true,
-                codeBarem: true,
-            },
-        });
-
-        console.log("Team ID:", teamId);
-        console.log("Representative Candidate ID:", representativeCandidate.id);
-        console.log("Team Barem Scores:", teamBaremScores);
-
-        if (teamBaremScores.length === 0) {
-            return null;
-        }
-
-        const judgeScores = new Map<string, number>();
-        teamBaremScores.forEach((scoreRecord) => {
-            const currentScore = judgeScores.get(scoreRecord.mentorId) || 0;
-            judgeScores.set(scoreRecord.mentorId, currentScore + scoreRecord.score);
-        });
-
-        console.log("Judge Scores Map:", Array.from(judgeScores.entries()));
-
-        const judges = Array.from(judgeScores.values());
-        if (judges.length === 0) {
-            return null;
-        }
-
-        const totalScore = judges.reduce((sum, score) => sum + score, 0);
-        const averageScore = totalScore / judges.length;
-
-        console.log("Total Score:", totalScore, "Average Score:", averageScore);
-
-        return Number(averageScore.toFixed(2));
-    };
-
-    private getJudgeScoresForCandidate = async (teamId: string, candidateId: string): Promise<number | null> => {
-        // Lấy tất cả judges của team thông qua room
-        const rooms = await adminRepository.getAllRooms();
-        const teamRoom = rooms.find((room) => room.team?.id === teamId && room.presentPhase === "OFFICIAL");
-
-        if (!teamRoom) {
-            return null;
-        }
-
-        // Lấy chi tiết phòng để có judges
-        const roomDetail = await adminRepository.getRoomDetail(teamRoom.id);
-        if (!roomDetail || !roomDetail.judgeRooms || roomDetail.judgeRooms.length === 0) {
-            return null;
-        }
-
-        // Xác định type dựa vào present_phase: TRIAL hoặc OFFICIAL
-        const scoreType = roomDetail.presentPhase === "TRIAL" ? "TRIAL_PRESENTATION" : "OFFICIAL_PRESENTATION";
-
-        // Lấy điểm từ từng judge và tính trung bình
-        const scores = await Promise.all(
-            roomDetail.judgeRooms.map(async (jr) => {
-                const score = await userRepository.getScoreMentor(jr.judge.id, candidateId);
-                return score || 0;
-            }),
-        );
-
-        // Tính điểm trung bình
-        const totalScore = scores.reduce((sum, s) => sum + s, 0);
-        return scores.length > 0 ? totalScore / scores.length : null;
     };
 }
 
