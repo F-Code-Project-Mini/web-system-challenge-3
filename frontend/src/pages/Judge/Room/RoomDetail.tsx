@@ -149,7 +149,7 @@ const RoomDetail = () => {
                                                 </div>
                                             </td>
                                             <td className="px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:px-6 sm:py-4 md:table-cell">
-                                                {candidate.statusC3 !== "FAILED" && (
+                                                {(candidate.statusC3 !== "FAILED" || candidate.scoreJudge > 0) && (
                                                     <div className="flex flex-col gap-2">
                                                         <div className="flex items-center gap-1 text-sm">
                                                             <span className="text-gray-500">Điểm:</span>
