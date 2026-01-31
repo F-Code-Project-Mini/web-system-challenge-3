@@ -3,6 +3,7 @@ import { ShowTopic } from "../Candidate/ShowTopic";
 import type { AdminTeamType } from "~/types/admin.types";
 import BadgeLeader from "~/components/BadgeLeader";
 import ResultBadge from "~/components/ResultBadge";
+import ApproveMember from "./components/ApproveMember";
 
 const Teams = ({
     team: { mentorship, candidates, leader, topic, name, group, teamScore },
@@ -61,6 +62,9 @@ const Teams = ({
                                 </th>
                                 <th className="hidden px-4 py-3 text-center text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5 md:table-cell">
                                     Điểm
+                                </th>
+                                <th className="hidden px-4 py-3 text-center text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5 md:table-cell">
+                                    Thao tác
                                 </th>
                             </tr>
                         </thead>
@@ -135,20 +139,10 @@ const Teams = ({
                                                 </div>
                                             </div>
                                         </td>
-                                        {/* <td className="hidden px-4 py-3.5 text-center text-sm whitespace-nowrap text-gray-900 sm:px-6 sm:py-4 md:table-cell">
-                                            {candidate.scoreJudge !== null ? (
-                                                <>
-                                                    <span
-                                                        className={`font-semibold ${Helper.belowAverage(candidate.scoreJudge) ? "text-red-500" : "text-green-500"}`}
-                                                    >
-                                                        {candidate.scoreJudge.toFixed(1)}
-                                                    </span>
-                                                    <span>/100</span>
-                                                </>
-                                            ) : (
-                                                <span className="text-gray-400">-</span>
-                                            )}
-                                        </td> */}
+
+                                        <td className="relative hidden px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:px-6 sm:py-4 md:table-cell">
+                                            <ApproveMember value={candidate.statusC3} />
+                                        </td>
                                     </tr>
                                 );
                             })}
