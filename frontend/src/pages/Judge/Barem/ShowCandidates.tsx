@@ -41,10 +41,10 @@ export const ShowCandidates = ({
                                 candidate.id === candidateActive?.id
                                     ? "border-primary/50 bg-gray-50"
                                     : "hover:border-primary/50 border-gray-200 hover:bg-gray-50"
-                            } ${candidate.statusC3 === "FAILED" ? "opacity-50" : ""}`}
+                            } ${candidate.statusC3 !== "WAITING" ? "opacity-50" : ""}`}
                         >
                             <RadioGroupItem
-                                disabled={candidate.statusC3 === "FAILED"}
+                                disabled={candidate.statusC3 !== "WAITING"}
                                 value={candidate.id}
                                 id={candidate.id}
                             />
