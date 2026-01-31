@@ -184,12 +184,12 @@ class Helper {
 
     static getStatusC3ClassName = (status: string) => {
         switch (status) {
-            case "FAILED":
-                return "bg-red-50";
-            case "PASSED":
-                return "bg-green-50";
-            case "REDO":
-                return "bg-yellow-50";
+            // case "FAILED":
+            //     return "bg-red-50";
+            // case "PASSED":
+            //     return "bg-green-50";
+            // case "REDO":
+            //     return "bg-yellow-50";
             default:
                 return "transition-colors hover:bg-gray-50/50";
         }
