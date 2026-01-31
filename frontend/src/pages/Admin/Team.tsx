@@ -3,12 +3,31 @@ import { ShowTopic } from "../Candidate/ShowTopic";
 import type { AdminTeamType } from "~/types/admin.types";
 import BadgeLeader from "~/components/BadgeLeader";
 import ResultBadge from "~/components/ResultBadge";
+import ApproveMember from "./components/ApproveMember";
+import { useEffect, useState } from "react";
+import { socket } from "~/utils/socket";
+import type { StatusC3 } from "~/types/user.types";
 
 const Teams = ({
     team: { mentorship, candidates, leader, topic, name, group, teamScore },
 }: {
     team: AdminTeamType;
 }) => {
+    const [candidateNew, setCandidateNew] = useState([...candidates]); // For avoiding unused variable warning
+    useEffect(() => {
+        if (!socket.connected) socket.connect();
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+    const handleStatusChange = (candidateId: string, newStatus: StatusC3) => {
+        setCandidateNew((prevCandidates) =>
+            prevCandidates.map((candidate) =>
+                candidate.id === candidateId ? { ...candidate, statusC3: newStatus } : candidate,
+            ),
+        );
+    };
     return (
         <section className="col-span-1 lg:col-span-16" id="members">
             <div className="overflow-hidden rounded-lg border border-gray-200/70 bg-white shadow-xs">
@@ -30,9 +49,9 @@ const Teams = ({
                                     <li>
                                         Điểm nhóm:{" "}
                                         <span
-                                            className={`font-bold ${teamScore >= 50 ? "text-green-600" : "text-red-600"}`}
+                                            className={`font-bold ${teamScore.finalTeamScore >= 50 ? "text-green-600" : "text-red-600"}`}
                                         >
-                                            {teamScore.toFixed(1)}/100
+                                            {teamScore.finalTeamScore.toFixed(1)}/100
                                         </span>
                                     </li>
                                 )}
@@ -62,10 +81,13 @@ const Teams = ({
                                 <th className="hidden px-4 py-3 text-center text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5 md:table-cell">
                                     Điểm
                                 </th>
+                                <th className="hidden px-4 py-3 text-center text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5 md:table-cell">
+                                    Thao tác
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200/60 bg-white">
-                            {candidates.map((candidate, index) => {
+                            {candidateNew.map((candidate, index) => {
                                 const isLeader = candidate.id === leader.id;
                                 return (
                                     <tr key={candidate.id} className={Helper.getStatusC3ClassName(candidate.statusC3)}>
@@ -118,22 +140,32 @@ const Teams = ({
                                                         <span className="text-gray-400">-</span>
                                                     )}
                                                 </div>
+                                                <div className="flex items-center gap-1">
+                                                    <span className="text-gray-500">Total:</span>
+
+                                                    <>
+                                                        <span
+                                                            className={`font-semibold ${Helper.belowAverage(((candidate.scoreJudge ?? 0) + (candidate.scoreMentor ?? 0)) / 2) ? "text-red-500" : "text-green-600"}`}
+                                                        >
+                                                            {(
+                                                                ((candidate.scoreJudge ?? 0) +
+                                                                    (candidate.scoreMentor ?? 0)) /
+                                                                2
+                                                            ).toFixed(1)}
+                                                        </span>
+                                                    </>
+                                                </div>
                                             </div>
                                         </td>
-                                        {/* <td className="hidden px-4 py-3.5 text-center text-sm whitespace-nowrap text-gray-900 sm:px-6 sm:py-4 md:table-cell">
-                                            {candidate.scoreJudge !== null ? (
-                                                <>
-                                                    <span
-                                                        className={`font-semibold ${Helper.belowAverage(candidate.scoreJudge) ? "text-red-500" : "text-green-500"}`}
-                                                    >
-                                                        {candidate.scoreJudge.toFixed(1)}
-                                                    </span>
-                                                    <span>/100</span>
-                                                </>
-                                            ) : (
-                                                <span className="text-gray-400">-</span>
-                                            )}
-                                        </td> */}
+
+                                        <td className="relative hidden px-4 py-3.5 text-sm whitespace-nowrap text-gray-600 sm:px-6 sm:py-4 md:table-cell">
+                                            <ApproveMember
+                                                value={candidate.statusC3}
+                                                candidateId={candidate.id}
+                                                socket={socket}
+                                                handleStatusChange={handleStatusChange}
+                                            />
+                                        </td>
                                     </tr>
                                 );
                             })}
