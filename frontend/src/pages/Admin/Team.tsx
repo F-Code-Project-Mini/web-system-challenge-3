@@ -4,14 +4,16 @@ import type { AdminTeamType } from "~/types/admin.types";
 import BadgeLeader from "~/components/BadgeLeader";
 import ResultBadge from "~/components/ResultBadge";
 import ApproveMember from "./components/ApproveMember";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { socket } from "~/utils/socket";
+import type { StatusC3 } from "~/types/user.types";
 
 const Teams = ({
     team: { mentorship, candidates, leader, topic, name, group, teamScore },
 }: {
     team: AdminTeamType;
 }) => {
+    const [candidateNew, setCandidateNew] = useState([...candidates]); // For avoiding unused variable warning
     useEffect(() => {
         if (!socket.connected) socket.connect();
 
@@ -19,6 +21,13 @@ const Teams = ({
             socket.disconnect();
         };
     }, []);
+    const handleStatusChange = (candidateId: string, newStatus: StatusC3) => {
+        setCandidateNew((prevCandidates) =>
+            prevCandidates.map((candidate) =>
+                candidate.id === candidateId ? { ...candidate, statusC3: newStatus } : candidate,
+            ),
+        );
+    };
     return (
         <section className="col-span-1 lg:col-span-16" id="members">
             <div className="overflow-hidden rounded-lg border border-gray-200/70 bg-white shadow-xs">
@@ -78,7 +87,7 @@ const Teams = ({
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200/60 bg-white">
-                            {candidates.map((candidate, index) => {
+                            {candidateNew.map((candidate, index) => {
                                 const isLeader = candidate.id === leader.id;
                                 return (
                                     <tr key={candidate.id} className={Helper.getStatusC3ClassName(candidate.statusC3)}>
@@ -154,6 +163,7 @@ const Teams = ({
                                                 value={candidate.statusC3}
                                                 candidateId={candidate.id}
                                                 socket={socket}
+                                                handleStatusChange={handleStatusChange}
                                             />
                                         </td>
                                     </tr>
