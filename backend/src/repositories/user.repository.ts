@@ -50,37 +50,51 @@ class UserRepository {
     };
 
     // get điểm mentor chấm userId: string
-    getScoreMentor = async (
-        mentorId: string = "",
-        userId: string,
+    // getScoreMentor = async (
+    //     mentorId: string = "",
+    //     userId: string,
 
-        type: "PROCESSING" | "TRIAL_PRESENTATION" | "OFFICIAL_PRESENTATION" = "PROCESSING",
-    ) => {
-        const scores = await prisma.baremScore.findMany({
-            where: {
-                ...(mentorId ? { mentorId } : {}),
-                candidateId: userId,
-                role: "MENTOR",
-                type,
-            },
-            select: {
-                mentorId: true,
-                score: true,
-            },
+    //     type: "PROCESSING" | "TRIAL_PRESENTATION" | "OFFICIAL_PRESENTATION" = "PROCESSING",
+    // ) => {
+    //     const scores = await prisma.baremScore.findMany({
+    //         where: {
+    //             ...(mentorId ? { mentorId } : {}),
+    //             candidateId: userId,
+    //             role: "MENTOR",
+    //             type,
+    //         },
+    //         select: {
+    //             mentorId: true,
+    //             score: true,
+    //         },
+    //     });
+
+    //     if (scores.length === 0) {
+    //         return 0;
+    //     }
+
+    //     const uniqueMentors = new Set(scores.map((s) => s.mentorId));
+    //     const mentorCount = uniqueMentors.size;
+
+    //     const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
+
+    //     const averageScore = totalScore / mentorCount;
+
+    //     return Number(averageScore.toFixed(2));
+    // };
+
+    getScoreMentor = async (candidateId: string) => {
+        const result = await prisma.viewCandidateScore.findUnique({
+            where: { candidateId },
         });
+        return result;
+    };
 
-        if (scores.length === 0) {
-            return 0;
-        }
-
-        const uniqueMentors = new Set(scores.map((s) => s.mentorId));
-        const mentorCount = uniqueMentors.size;
-
-        const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
-
-        const averageScore = totalScore / mentorCount;
-
-        return Number(averageScore.toFixed(2));
+    getTeamScores = async (teamId: string) => {
+        const result = await prisma.viewTeamScore.findUnique({
+            where: { teamId },
+        });
+        return result;
     };
 
     getScoreJudge = async (
@@ -90,33 +104,34 @@ class UserRepository {
         type: "PROCESSING" | "TRIAL_PRESENTATION" | "OFFICIAL_PRESENTATION" = "PROCESSING",
         team: boolean = false,
     ) => {
-        const scores = await prisma.baremScore.findMany({
-            where: {
-                ...(mentorId ? { mentorId } : {}),
-                candidateId: userId,
-                role: "JUDGE",
-                type,
-                codeBarem: { startsWith: team ? "#judge_official_team_" : "#judge_official_personal_" },
-                // ...(team ? { codeBarem: { startsWith: "#judge_official_team_" } } : {}),
-            },
-            select: {
-                mentorId: true,
-                score: true,
-            },
-        });
+        // const scores = await prisma.baremScore.findMany({
+        //     where: {
+        //         ...(mentorId ? { mentorId } : {}),
+        //         candidateId: userId,
+        //         role: "JUDGE",
+        //         type,
+        //         codeBarem: { startsWith: team ? "#judge_official_team_" : "#judge_official_personal_" },
+        //         // ...(team ? { codeBarem: { startsWith: "#judge_official_team_" } } : {}),
+        //     },
+        //     select: {
+        //         mentorId: true,
+        //         score: true,
+        //     },
+        // });
 
-        if (scores.length === 0) {
-            return 0;
-        }
+        // if (scores.length === 0) {
+        //     return 0;
+        // }
 
-        const uniqueMentors = new Set(scores.map((s) => s.mentorId));
-        const mentorCount = uniqueMentors.size;
+        // const uniqueMentors = new Set(scores.map((s) => s.mentorId));
+        // const mentorCount = uniqueMentors.size;
 
-        const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
+        // const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
 
-        const averageScore = totalScore / mentorCount;
+        // const averageScore = totalScore / mentorCount;
 
-        return Number(averageScore.toFixed(2));
+        // return Number(averageScore.toFixed(2));
+        return 0;
     };
 }
 const userRepository = new UserRepository();

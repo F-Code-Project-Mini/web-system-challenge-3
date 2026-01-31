@@ -30,9 +30,9 @@ const Teams = ({
                                     <li>
                                         Điểm nhóm:{" "}
                                         <span
-                                            className={`font-bold ${teamScore >= 50 ? "text-green-600" : "text-red-600"}`}
+                                            className={`font-bold ${teamScore.finalTeamScore >= 50 ? "text-green-600" : "text-red-600"}`}
                                         >
-                                            {teamScore.toFixed(1)}/100
+                                            {teamScore.finalTeamScore.toFixed(1)}/100
                                         </span>
                                     </li>
                                 )}

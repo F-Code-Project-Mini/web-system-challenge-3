@@ -244,12 +244,11 @@ view ViewCandidateScore {
 }
 
 view ViewTeamScore {
-  teamGroup      Int     @map("team_group")
+  teamId         String  @unique @map("team_id") @db.VarChar(36)
   teamName       String? @map("team_name") @db.VarChar(255)
-  leaderName     String? @map("leader_name")
+  teamGroup      Int     @map("team_group")
   totalJudges    Int     @map("total_judges")
   finalTeamScore Float   @map("final_team_score")
-  teamId         String  @unique @map("team_id") @db.VarChar(36) // Để @unique ở đây là được
 
   @@map("view_team_scores")
 }
