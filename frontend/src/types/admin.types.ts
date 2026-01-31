@@ -196,9 +196,15 @@ export interface AdminTeamType {
         officialDate: string[];
         finalDate: string;
     } | null;
-    teamScore: number | null;
+    teamScore: TeamScoreType | null;
 }
-
+interface TeamScoreType {
+    teamId: string;
+    teamName: string;
+    teamGroup: number;
+    totalJudges: number;
+    finalTeamScore: number;
+}
 export interface AdminCandidateType {
     id: string;
     studentCode: string;
