@@ -1,13 +1,13 @@
-import Helper from "~/utils/helper";
-import { NavLink } from "./NavLink";
-import { Send } from "lucide-react";
-import { useLocation } from "react-router";
+import { Send } from 'lucide-react';
+import { useLocation } from 'react-router';
+import Helper from '~/utils/helper';
+import { NavLink } from './NavLink';
 
 const CandidateHeader = () => {
-    const location = useLocation();
-    return (
-        <>
-            {/* <li id="presents">
+  const location = useLocation();
+  return (
+    <>
+      {/* <li id="presents">
                 <NavLink
                     url="/presents"
                     name="Lịch thuyết trình"
@@ -15,16 +15,16 @@ const CandidateHeader = () => {
                     active={Helper.isActive(location.pathname, "/presents")}
                 />
             </li> */}
-            <li id="submissions">
-                <NavLink
-                    url="/submissions"
-                    name="Sản phẩm"
-                    Icon={Send}
-                    active={Helper.isActive(location.pathname, "/submissions")}
-                />
-            </li>
-        </>
-    );
+      <li id="submissions">
+        <NavLink
+          url="/submissions"
+          name="Sản phẩm"
+          Icon={Send}
+          active={Helper.isActive(location.pathname, '/submissions')}
+        />
+      </li>
+    </>
+  );
 };
 
 export default CandidateHeader;

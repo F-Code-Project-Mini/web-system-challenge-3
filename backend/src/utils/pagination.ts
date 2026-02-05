@@ -1,59 +1,56 @@
-import { Prisma } from "@prisma/client";
-import { DefaultArgs } from "@prisma/client/runtime/client";
-
 type PaginateArgs<T> = T & {
-    page?: number;
-    limit?: number;
+  page?: number;
+  limit?: number;
 };
 
 export async function paginate<
-    TArgs extends {
-        select?: null | undefined;
-        omit?: null | undefined;
-        include?: null | undefined;
-        where?: undefined;
-        orderBy?: undefined;
-        cursor?: undefined;
-        take?: number | undefined;
-        skip?: number | undefined;
-        distinct?: undefined;
-    },
+  TArgs extends {
+    select?: null | undefined;
+    omit?: null | undefined;
+    include?: null | undefined;
+    where?: undefined;
+    orderBy?: undefined;
+    cursor?: undefined;
+    take?: number | undefined;
+    skip?: number | undefined;
+    distinct?: undefined;
+  },
 >(
-    model: {
-        findMany(args: TArgs): Promise<any[]>;
-        count(args: { where?: TArgs["where"] }): Promise<number>;
-    },
-    args: PaginateArgs<TArgs>,
+  model: {
+    findMany(args: TArgs): Promise<any[]>;
+    count(args: { where?: TArgs['where'] }): Promise<number>;
+  },
+  args: PaginateArgs<TArgs>,
 ) {
-    const { page = 1, limit = 10, ...rest } = args;
+  const { page = 1, limit = 10, ...rest } = args;
 
-    const safePage = page < 1 ? 1 : page;
-    const safeLimit = limit <= 0 ? 10 : limit;
+  const safePage = page < 1 ? 1 : page;
+  const safeLimit = limit <= 0 ? 10 : limit;
 
-    const skip = (safePage - 1) * safeLimit;
+  const skip = (safePage - 1) * safeLimit;
 
-    const [data, total] = await Promise.all([
-        model.findMany({
-            ...(rest as TArgs),
-            skip,
-            take: safeLimit,
-        }),
-        model.count({
-            where: (rest as TArgs).where,
-        }),
-    ]);
+  const [data, total] = await Promise.all([
+    model.findMany({
+      ...(rest as TArgs),
+      skip,
+      take: safeLimit,
+    }),
+    model.count({
+      where: (rest as TArgs).where,
+    }),
+  ]);
 
-    const totalPages = Math.ceil(total / safeLimit);
+  const totalPages = Math.ceil(total / safeLimit);
 
-    return {
-        data,
-        meta: {
-            total,
-            totalPages,
-            page: safePage,
-            limit: safeLimit,
-            hasNextPage: safePage < totalPages,
-            hasPrevPage: safePage > 1,
-        },
-    };
+  return {
+    data,
+    meta: {
+      total,
+      totalPages,
+      page: safePage,
+      limit: safeLimit,
+      hasNextPage: safePage < totalPages,
+      hasPrevPage: safePage > 1,
+    },
+  };
 }

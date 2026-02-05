@@ -1,102 +1,102 @@
-import prisma from "~/configs/prisma";
-import { RoleType } from "~/constants/enums";
+import prisma from '~/configs/prisma';
+import { RoleType } from '~/constants/enums';
 
 class UserRepository {
-    findByEmail = async (email: string) => {
-        const result = await prisma.user.findUnique({
-            where: { email },
-        });
-        return result;
-    };
+  findByEmail = async (email: string) => {
+    const result = await prisma.user.findUnique({
+      where: { email },
+    });
+    return result;
+  };
 
-    findById = async (id: string) => {
-        console.log("id", id);
-        const result = await prisma.user.findUnique({
-            where: { id },
+  findById = async (id: string) => {
+    console.log('id', id);
+    const result = await prisma.user.findUnique({
+      where: { id },
 
-            omit: {
-                password: true,
-            },
-            include: {
-                // userRoles: true,
-                candidate: {
-                    omit: {
-                        mentorNote: true,
-                    },
-                },
-            },
-        });
-        return result;
-    };
+      omit: {
+        password: true,
+      },
+      include: {
+        // userRoles: true,
+        candidate: {
+          omit: {
+            mentorNote: true,
+          },
+        },
+      },
+    });
+    return result;
+  };
 
-    updatePassword = async (id: string, newPassword: string) => {
-        const result = await prisma.user.update({
-            where: { id },
-            data: {
-                password: newPassword,
-            },
-        });
-        return result;
-    };
-    hasRole = (userId: string, role: RoleType) => {
-        return prisma.userRole.findFirst({
-            where: {
-                userId,
-                role: {
-                    role,
-                },
-            },
-        });
-    };
-    getScoreMentor = async (candidateId: string) => {
-        const result = await prisma.viewCandidateScore.findUnique({
-            where: { candidateId },
-        });
-        return result;
-    };
+  updatePassword = async (id: string, newPassword: string) => {
+    const result = await prisma.user.update({
+      where: { id },
+      data: {
+        password: newPassword,
+      },
+    });
+    return result;
+  };
+  hasRole = (userId: string, role: RoleType) => {
+    return prisma.userRole.findFirst({
+      where: {
+        userId,
+        role: {
+          role,
+        },
+      },
+    });
+  };
+  getScoreMentor = async (candidateId: string) => {
+    const result = await prisma.viewCandidateScore.findUnique({
+      where: { candidateId },
+    });
+    return result;
+  };
 
-    getTeamScores = async (teamId: string) => {
-        const result = await prisma.viewTeamScore.findUnique({
-            where: { teamId },
-        });
-        return result;
-    };
+  getTeamScores = async (teamId: string) => {
+    const result = await prisma.viewTeamScore.findUnique({
+      where: { teamId },
+    });
+    return result;
+  };
 
-    getScoreJudge = async (
-        mentorId: string = "",
-        userId: string,
+  getScoreJudge = async (
+    mentorId: string = '',
+    userId: string,
 
-        type: "PROCESSING" | "TRIAL_PRESENTATION" | "OFFICIAL_PRESENTATION" = "PROCESSING",
-        team: boolean = false,
-    ) => {
-        const scores = await prisma.baremScore.findMany({
-            where: {
-                ...(mentorId ? { mentorId } : {}),
-                candidateId: userId,
-                role: "JUDGE",
-                type,
-                codeBarem: { startsWith: team ? "#judge_official_team_" : "#judge_official_personal_" },
-                // ...(team ? { codeBarem: { startsWith: "#judge_official_team_" } } : {}),
-            },
-            select: {
-                mentorId: true,
-                score: true,
-            },
-        });
+    type: 'PROCESSING' | 'TRIAL_PRESENTATION' | 'OFFICIAL_PRESENTATION' = 'PROCESSING',
+    team: boolean = false,
+  ) => {
+    const scores = await prisma.baremScore.findMany({
+      where: {
+        ...(mentorId ? { mentorId } : {}),
+        candidateId: userId,
+        role: 'JUDGE',
+        type,
+        codeBarem: { startsWith: team ? '#judge_official_team_' : '#judge_official_personal_' },
+        // ...(team ? { codeBarem: { startsWith: "#judge_official_team_" } } : {}),
+      },
+      select: {
+        mentorId: true,
+        score: true,
+      },
+    });
 
-        if (scores.length === 0) {
-            return 0;
-        }
+    if (scores.length === 0) {
+      return 0;
+    }
 
-        const uniqueMentors = new Set(scores.map((s) => s.mentorId));
-        const mentorCount = uniqueMentors.size;
+    const uniqueMentors = new Set(scores.map((s) => s.mentorId));
+    const mentorCount = uniqueMentors.size;
 
-        const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
+    const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
 
-        const averageScore = totalScore / mentorCount;
+    const averageScore = totalScore / mentorCount;
 
-        return Number(averageScore.toFixed(2));
-    };
+    return Number(averageScore.toFixed(2));
+  };
 }
 const userRepository = new UserRepository();
 export default userRepository;

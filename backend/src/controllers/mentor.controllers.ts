@@ -1,219 +1,218 @@
-import { Request, Response } from "express";
-import prisma from "~/configs/prisma";
-import { HTTP_STATUS } from "~/constants/httpStatus";
-import { BaremUpdateNote } from "~/rules/requests/barem.request";
-import { ResponseClient } from "~/rules/response";
+import { Request, Response } from 'express';
+import prisma from '~/configs/prisma';
+import { HTTP_STATUS } from '~/constants/httpStatus';
+import { ResponseClient } from '~/rules/response';
 
 const mentorBarem = [
-    {
-        target: "Member",
+  {
+    target: 'Member',
+    partitions: [
+      {
+        criteria: 'Hợp tác và giao tiếp',
         partitions: [
-            {
-                criteria: "Hợp tác và giao tiếp",
-                partitions: [
-                    {
-                        code: "#mentor_1",
-                        description: `<p>Tham gia đầy đủ các hoạt động họp nhóm</p>`,
-                        maxScore: 5,
-                    },
-                    {
-                        code: "#mentor_2",
-                        description: `<p>Lắng nghe và tôn trọng ý kiến của Leader</p>`,
-                        maxScore: 5,
-                    },
-                    {
-                        code: "#mentor_3",
-                        description: `<p>Lắng nghe đóng góp ý kiến từ các thành viên khác</p>`,
-                        maxScore: 5,
-                    },
-                ],
-            },
-            {
-                criteria: "Đóng góp",
-                partitions: [
-                    {
-                        code: "#mentor_4",
-                        description: `<p>Đóng góp trong phần làm việc nhóm (Mentor cần note rõ làm nội dung gì: slide, code, ...)</p>`,
-                        maxScore: 5,
-                    },
-                    {
-                        code: "#mentor_5",
-                        description: `<p>Tích cực đóng góp ý kiến, thảo luận cùng với nhóm</p>`,
-                        maxScore: 5,
-                    },
-                ],
-            },
-            {
-                criteria: "Kết nối giữa các thành viên",
-                partitions: [
-                    {
-                        code: "#mentor_6",
-                        description: `<p>Nhiệt huyết và năng động trong việc giao lưu với các thành viên khác</p>`,
-                        maxScore: 5,
-                    },
-                    {
-                        code: "#mentor_7",
-                        description: `<p><b>Chủ động</b> hỗ trợ các thành viên khác khi gặp khó khăn.</p>`,
-                        maxScore: 10,
-                    },
-                    {
-                        code: "#mentor_8",
-                        description: `<p>Hòa đồng với các bạn trong nhóm</p>`,
-                        maxScore: 10,
-                    },
-                ],
-            },
-            {
-                code: "#mentor_4",
-                criteria: "Quản lý thời gian",
-                partitions: [
-                    {
-                        code: "#mentor_9",
-                        description: `<p>Hoàn thành task đúng deadline</p>`,
-                        maxScore: 5,
-                    },
-                    {
-                        code: "#mentor_10",
-                        description: `<p>Chuẩn bị tốt trước khi present</p>`,
-                        maxScore: 5,
-                    },
-                ],
-            },
+          {
+            code: '#mentor_1',
+            description: `<p>Tham gia đầy đủ các hoạt động họp nhóm</p>`,
+            maxScore: 5,
+          },
+          {
+            code: '#mentor_2',
+            description: `<p>Lắng nghe và tôn trọng ý kiến của Leader</p>`,
+            maxScore: 5,
+          },
+          {
+            code: '#mentor_3',
+            description: `<p>Lắng nghe đóng góp ý kiến từ các thành viên khác</p>`,
+            maxScore: 5,
+          },
         ],
-    },
-    {
-        target: "Leader",
+      },
+      {
+        criteria: 'Đóng góp',
         partitions: [
-            {
-                code: "#mentor_5",
-                criteria: "Lên kế hoạch và phân công",
-                partitions: [
-                    {
-                        code: "#mentor_11",
-                        description: `<p>Có lên kế hoạch, định hướng rõ ràng cho nhóm</p>`,
-                        maxScore: 2,
-                    },
-                    {
-                        code: "#mentor_12",
-                        description: `<p>Phân chia task hợp lý, và có <b>nộp bảng phân công công việc cho nhóm</b></p>`,
-                        maxScore: 3,
-                    },
-                ],
-            },
-            {
-                code: "#mentor_6",
-                criteria: "Theo dõi tiến độ của nhóm",
-                partitions: [
-                    {
-                        code: "#mentor_13",
-                        description: `<p>Thường xuyên keep track task của các thành viên</p>`,
-                        maxScore: 5,
-                    },
-                    {
-                        code: "#mentor_14",
-                        description: `<p>Thường xuyên đôn đốc team để hoàn thành công việc</p>`,
-                        maxScore: 5,
-                    },
-                ],
-            },
+          {
+            code: '#mentor_4',
+            description: `<p>Đóng góp trong phần làm việc nhóm (Mentor cần note rõ làm nội dung gì: slide, code, ...)</p>`,
+            maxScore: 5,
+          },
+          {
+            code: '#mentor_5',
+            description: `<p>Tích cực đóng góp ý kiến, thảo luận cùng với nhóm</p>`,
+            maxScore: 5,
+          },
         ],
-    },
-    {
-        target: "Thái độ",
+      },
+      {
+        criteria: 'Kết nối giữa các thành viên',
         partitions: [
-            {
-                criteria: "Thái độ",
-                partitions: [
-                    {
-                        code: "#mentor_15",
-                        description: `<p>Tích cực tìm hiểu các kiến thức mới</p>`,
-                        maxScore: 5,
-                    },
-                    {
-                        code: "#mentor_16",
-                        description: `<p>Năng nổ khi được giao đề</p>`,
-                        maxScore: 5,
-                    },
-                    {
-                        code: "#mentor_17",
-                        description: `<p>Tôn trọng mentor</p>`,
-                        maxScore: 5,
-                    },
-                    {
-                        code: "#mentor_18",
-                        description: `<p>Lắng nghe lời góp ý từ mentor (trong trường hợp mentor được thông báo hỗ trợ góp ý phần đó, nếu mentor không góp ý thì phần này full điểm)</p>`,
-                        maxScore: 5,
-                    },
-                    {
-                        code: "#mentor_19",
-                        description: `<p>Dành thời gian để tìm hiểu đề</p>`,
-                        maxScore: 5,
-                    },
-                ],
-            },
+          {
+            code: '#mentor_6',
+            description: `<p>Nhiệt huyết và năng động trong việc giao lưu với các thành viên khác</p>`,
+            maxScore: 5,
+          },
+          {
+            code: '#mentor_7',
+            description: `<p><b>Chủ động</b> hỗ trợ các thành viên khác khi gặp khó khăn.</p>`,
+            maxScore: 10,
+          },
+          {
+            code: '#mentor_8',
+            description: `<p>Hòa đồng với các bạn trong nhóm</p>`,
+            maxScore: 10,
+          },
         ],
-    },
+      },
+      {
+        code: '#mentor_4',
+        criteria: 'Quản lý thời gian',
+        partitions: [
+          {
+            code: '#mentor_9',
+            description: `<p>Hoàn thành task đúng deadline</p>`,
+            maxScore: 5,
+          },
+          {
+            code: '#mentor_10',
+            description: `<p>Chuẩn bị tốt trước khi present</p>`,
+            maxScore: 5,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    target: 'Leader',
+    partitions: [
+      {
+        code: '#mentor_5',
+        criteria: 'Lên kế hoạch và phân công',
+        partitions: [
+          {
+            code: '#mentor_11',
+            description: `<p>Có lên kế hoạch, định hướng rõ ràng cho nhóm</p>`,
+            maxScore: 2,
+          },
+          {
+            code: '#mentor_12',
+            description: `<p>Phân chia task hợp lý, và có <b>nộp bảng phân công công việc cho nhóm</b></p>`,
+            maxScore: 3,
+          },
+        ],
+      },
+      {
+        code: '#mentor_6',
+        criteria: 'Theo dõi tiến độ của nhóm',
+        partitions: [
+          {
+            code: '#mentor_13',
+            description: `<p>Thường xuyên keep track task của các thành viên</p>`,
+            maxScore: 5,
+          },
+          {
+            code: '#mentor_14',
+            description: `<p>Thường xuyên đôn đốc team để hoàn thành công việc</p>`,
+            maxScore: 5,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    target: 'Thái độ',
+    partitions: [
+      {
+        criteria: 'Thái độ',
+        partitions: [
+          {
+            code: '#mentor_15',
+            description: `<p>Tích cực tìm hiểu các kiến thức mới</p>`,
+            maxScore: 5,
+          },
+          {
+            code: '#mentor_16',
+            description: `<p>Năng nổ khi được giao đề</p>`,
+            maxScore: 5,
+          },
+          {
+            code: '#mentor_17',
+            description: `<p>Tôn trọng mentor</p>`,
+            maxScore: 5,
+          },
+          {
+            code: '#mentor_18',
+            description: `<p>Lắng nghe lời góp ý từ mentor (trong trường hợp mentor được thông báo hỗ trợ góp ý phần đó, nếu mentor không góp ý thì phần này full điểm)</p>`,
+            maxScore: 5,
+          },
+          {
+            code: '#mentor_19',
+            description: `<p>Dành thời gian để tìm hiểu đề</p>`,
+            maxScore: 5,
+          },
+        ],
+      },
+    ],
+  },
 ];
 const fetchBaremScore = async (mentorId: string, candidateId: string, codeBarem: string) => {
-    return await prisma.baremScore.findFirst({
-        where: {
-            mentorId,
-            candidateId,
-            codeBarem,
-        },
-    });
+  return await prisma.baremScore.findFirst({
+    where: {
+      mentorId,
+      candidateId,
+      codeBarem,
+    },
+  });
 };
 
 const enrichPartitionWithScore = async (partition: any, mentorId: string, candidateId: string) => {
-    const score = await fetchBaremScore(mentorId, candidateId, partition.code);
-    return {
-        ...partition,
-        scoreCurrent: score?.score ?? "",
-        note: score?.note ?? "",
-    };
+  const score = await fetchBaremScore(mentorId, candidateId, partition.code);
+  return {
+    ...partition,
+    scoreCurrent: score?.score ?? '',
+    note: score?.note ?? '',
+  };
 };
 
 const processNestedPartitions = async (partitions: any[], mentorId: string, candidateId: string) => {
-    return await Promise.all(
-        partitions.map((nestedPartition) => enrichPartitionWithScore(nestedPartition, mentorId, candidateId)),
-    );
+  return await Promise.all(
+    partitions.map((nestedPartition) => enrichPartitionWithScore(nestedPartition, mentorId, candidateId)),
+  );
 };
 
 const processPartition = async (partition: any, mentorId: string, candidateId: string) => {
-    // Nếu có nested partitions
-    if (partition.partitions && Array.isArray(partition.partitions)) {
-        const nestedPartitions = await processNestedPartitions(partition.partitions, mentorId, candidateId);
+  // Nếu có nested partitions
+  if (partition.partitions && Array.isArray(partition.partitions)) {
+    const nestedPartitions = await processNestedPartitions(partition.partitions, mentorId, candidateId);
 
-        return {
-            ...partition,
-            partitions: nestedPartitions,
-        };
-    }
-    return await enrichPartitionWithScore(partition, mentorId, candidateId);
+    return {
+      ...partition,
+      partitions: nestedPartitions,
+    };
+  }
+  return await enrichPartitionWithScore(partition, mentorId, candidateId);
 };
 
 const processBaremItem = async (item: any, mentorId: string, candidateId: string) => {
-    const partitions = await Promise.all(
-        item.partitions.map((partition: any) => processPartition(partition, mentorId, candidateId)),
-    );
+  const partitions = await Promise.all(
+    item.partitions.map((partition: any) => processPartition(partition, mentorId, candidateId)),
+  );
 
-    return {
-        ...item,
-        partitions,
-    };
+  return {
+    ...item,
+    partitions,
+  };
 };
 
 export const getBarem = async (req: Request, res: Response) => {
-    const { candidateId } = req.params;
-    const mentorId = req.userId!;
+  const { candidateId } = req.params;
+  const mentorId = req.userId!;
 
-    const result = await Promise.all(mentorBarem.map((item) => processBaremItem(item, mentorId, candidateId)));
+  const result = await Promise.all(mentorBarem.map((item) => processBaremItem(item, mentorId, candidateId)));
 
-    return res.status(HTTP_STATUS.OK).json(
-        new ResponseClient({
-            result,
-        }),
-    );
+  return res.status(HTTP_STATUS.OK).json(
+    new ResponseClient({
+      result,
+    }),
+  );
 };
 
 // const mentorBarem = [

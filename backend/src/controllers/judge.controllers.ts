@@ -1,144 +1,144 @@
-import { NextFunction, Request, Response } from "express";
-import prisma from "~/configs/prisma";
-import { judgeBaremOfficial } from "~/constants/barems/oficial";
-import { judgeBaremTeam } from "~/constants/barems/team";
-import { judgeBaremTrial } from "~/constants/barems/trial";
-import { HTTP_STATUS } from "~/constants/httpStatus";
-import { ResponseClient } from "~/rules/response";
-import judgeService from "~/services/judge.service";
-import teamService from "~/services/team.service";
-import authService from "~/services/user.service";
+import { NextFunction, Request, Response } from 'express';
+import prisma from '~/configs/prisma';
+import { judgeBaremOfficial } from '~/constants/barems/oficial';
+import { judgeBaremTeam } from '~/constants/barems/team';
+import { judgeBaremTrial } from '~/constants/barems/trial';
+import { HTTP_STATUS } from '~/constants/httpStatus';
+import { ResponseClient } from '~/rules/response';
+import judgeService from '~/services/judge.service';
+import teamService from '~/services/team.service';
+import authService from '~/services/user.service';
 
 const fetchBaremScore = async (judgeId: string, candidateId: string, codeBarem: string) => {
-    return await prisma.baremScore.findFirst({
-        where: {
-            mentorId: judgeId,
-            candidateId,
-            codeBarem,
-        },
-    });
+  return await prisma.baremScore.findFirst({
+    where: {
+      mentorId: judgeId,
+      candidateId,
+      codeBarem,
+    },
+  });
 };
 
 const enrichPartitionWithScore = async (partition: any, judgeId: string, candidateId: string) => {
-    const score = await fetchBaremScore(judgeId, candidateId, partition.code);
-    return {
-        ...partition,
-        scoreCurrent: score?.score ?? "",
-        note: score?.note ?? "",
-    };
+  const score = await fetchBaremScore(judgeId, candidateId, partition.code);
+  return {
+    ...partition,
+    scoreCurrent: score?.score ?? '',
+    note: score?.note ?? '',
+  };
 };
 
 const processNestedPartitions = async (partitions: any[], judgeId: string, candidateId: string) => {
-    return await Promise.all(
-        partitions.map((nestedPartition) => enrichPartitionWithScore(nestedPartition, judgeId, candidateId)),
-    );
+  return await Promise.all(
+    partitions.map((nestedPartition) => enrichPartitionWithScore(nestedPartition, judgeId, candidateId)),
+  );
 };
 
 const processPartition = async (partition: any, judgeId: string, candidateId: string) => {
-    if (partition.partitions && Array.isArray(partition.partitions)) {
-        const nestedPartitions = await processNestedPartitions(partition.partitions, judgeId, candidateId);
-        return {
-            ...partition,
-            partitions: nestedPartitions,
-        };
-    }
-    return await enrichPartitionWithScore(partition, judgeId, candidateId);
+  if (partition.partitions && Array.isArray(partition.partitions)) {
+    const nestedPartitions = await processNestedPartitions(partition.partitions, judgeId, candidateId);
+    return {
+      ...partition,
+      partitions: nestedPartitions,
+    };
+  }
+  return await enrichPartitionWithScore(partition, judgeId, candidateId);
 };
 
 const processBaremItem = async (item: any, judgeId: string, candidateId: string) => {
-    const partitions = await Promise.all(
-        item.partitions.map((partition: any) => processPartition(partition, judgeId, candidateId)),
-    );
-    return {
-        ...item,
-        partitions,
-    };
+  const partitions = await Promise.all(
+    item.partitions.map((partition: any) => processPartition(partition, judgeId, candidateId)),
+  );
+  return {
+    ...item,
+    partitions,
+  };
 };
 
 export const getJudgeRooms = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const userId = req.userId!;
-        const result = await judgeService.getJudgeRooms(userId);
-        return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
-    } catch (error) {
-        return next(error);
-    }
+  try {
+    const userId = req.userId!;
+    const result = await judgeService.getJudgeRooms(userId);
+    return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
+  } catch (error) {
+    return next(error);
+  }
 };
 export const getJudgeInfo = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const judgeId = req.params.judgeId;
-        const result = await authService.getInfo(judgeId);
-        return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
-    } catch (error) {
-        return next(error);
-    }
+  try {
+    const judgeId = req.params.judgeId;
+    const result = await authService.getInfo(judgeId);
+    return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
+  } catch (error) {
+    return next(error);
+  }
 };
 export const getDetailRoom = async (req: Request<{ roomId: string }>, res: Response, next: NextFunction) => {
-    try {
-        const { roomId } = req.params;
-        const result = await judgeService.getDetailRoom(roomId);
-        return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
-    } catch (error) {
-        return next(error);
-    }
+  try {
+    const { roomId } = req.params;
+    const result = await judgeService.getDetailRoom(roomId);
+    return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
+  } catch (error) {
+    return next(error);
+  }
 };
 export const getTeamsByRoom = async (
-    req: Request<{ roomId: string; judgeId: string }>,
-    res: Response,
-    next: NextFunction,
+  req: Request<{ roomId: string; judgeId: string }>,
+  res: Response,
+  next: NextFunction,
 ) => {
-    try {
-        const userId = req.userId!;
-        const { roomId, judgeId } = req.params;
-        const result = await judgeService.getTeamsByRoom(judgeId ? judgeId : userId, roomId);
-        return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
-    } catch (error) {
-        return next(error);
-    }
+  try {
+    const userId = req.userId!;
+    const { roomId, judgeId } = req.params;
+    const result = await judgeService.getTeamsByRoom(judgeId ? judgeId : userId, roomId);
+    return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
+  } catch (error) {
+    return next(error);
+  }
 };
 
 export const getBarem = async (
-    req: Request<{ candidateId: string; roomId: string; judgeId: string }>,
-    res: Response,
-    next: NextFunction,
+  req: Request<{ candidateId: string; roomId: string; judgeId: string }>,
+  res: Response,
+  next: NextFunction,
 ) => {
-    try {
-        const { candidateId, roomId = "", judgeId } = req.params;
-        const userId = judgeId ? judgeId : req.userId!;
-        const room = await judgeService.getDetailRoom(roomId);
-        const barem = room?.modePresent === "ONLINE" ? judgeBaremTrial : judgeBaremOfficial;
-        const result = await Promise.all(barem.map((item) => processBaremItem(item, userId, candidateId)));
-        return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
-    } catch (error) {
-        return next(error);
-    }
+  try {
+    const { candidateId, roomId = '', judgeId } = req.params;
+    const userId = judgeId ? judgeId : req.userId!;
+    const room = await judgeService.getDetailRoom(roomId);
+    const barem = room?.modePresent === 'ONLINE' ? judgeBaremTrial : judgeBaremOfficial;
+    const result = await Promise.all(barem.map((item) => processBaremItem(item, userId, candidateId)));
+    return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
+  } catch (error) {
+    return next(error);
+  }
 };
 
 export const getBaremTeam = async (req: Request<{ candidateId: string }>, res: Response, next: NextFunction) => {
-    try {
-        const { candidateId } = req.params;
-        console.log("candidateId", candidateId);
-        const judgeId = req.userId!;
-        const leaderId = await teamService.getLeaderByMemberId(candidateId);
-        const result = await Promise.all(judgeBaremTeam.map((item) => processBaremItem(item, judgeId, leaderId!)));
-        return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
-    } catch (error) {
-        return next(error);
-    }
+  try {
+    const { candidateId } = req.params;
+    console.log('candidateId', candidateId);
+    const judgeId = req.userId!;
+    const leaderId = await teamService.getLeaderByMemberId(candidateId);
+    const result = await Promise.all(judgeBaremTeam.map((item) => processBaremItem(item, judgeId, leaderId!)));
+    return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
+  } catch (error) {
+    return next(error);
+  }
 };
 
 export const updateNote = async (
-    req: Request<{ id: string }, {}, { note: string }>,
-    res: Response,
-    next: NextFunction,
+  req: Request<{ id: string }, {}, { note: string }>,
+  res: Response,
+  next: NextFunction,
 ) => {
-    try {
-        const userId = req.userId!;
-        const { id: teamId } = req.params;
-        const { note } = req.body;
-        const result = await judgeService.updateNote(userId, teamId, note);
-        return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
-    } catch (error) {
-        return next(error);
-    }
+  try {
+    const userId = req.userId!;
+    const { id: teamId } = req.params;
+    const { note } = req.body;
+    const result = await judgeService.updateNote(userId, teamId, note);
+    return res.status(HTTP_STATUS.OK).json(new ResponseClient({ result }));
+  } catch (error) {
+    return next(error);
+  }
 };

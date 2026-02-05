@@ -1,15 +1,15 @@
-import type { BaremResultItem } from "~/types/barem";
-import type { ResponseDetailData } from "~/types/team.types";
-import { privateApi } from "~/utils/axiosInstance";
+import type { BaremResultItem } from '~/types/barem';
+import type { ResponseDetailData } from '~/types/team.types';
+import { privateApi } from '~/utils/axiosInstance';
 
 class MentorApi {
-    static async getBarem(candidateId: string) {
-        const res = await privateApi.get<ResponseDetailData<BaremResultItem[]>>(`/mentor/get-barem/${candidateId}`);
-        return res.data;
-    }
-    static async updateNoteTeam(teamId: string, note: string) {
-        const res = await privateApi.patch(`/teams/${teamId}`, { note });
-        return res.data;
-    }
+  static async getBarem(candidateId: string) {
+    const res = await privateApi.get<ResponseDetailData<BaremResultItem[]>>(`/mentor/get-barem/${candidateId}`);
+    return res.data;
+  }
+  static async updateNoteTeam(teamId: string, note: string) {
+    const res = await privateApi.patch(`/teams/${teamId}`, { note });
+    return res.data;
+  }
 }
 export default MentorApi;

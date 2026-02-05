@@ -1,13 +1,12 @@
-import User from "./schemas/user.schema";
-import { TokenPayload } from "./rules/requests/User.requests";
-import { RoleType } from "./constants/enums";
+import { RoleType } from './constants/enums';
+import { TokenPayload } from './rules/requests/User.requests';
 
-declare module "express" {
-    interface Request {
-        userId?: string;
-        role?: RoleType;
-        roles?: RoleType[];
-        tokenPayload?: TokenPayload;
-        candidateId?: string;
-    }
+declare module 'express' {
+  interface Request {
+    userId?: string;
+    role?: RoleType;
+    roles?: RoleType[];
+    tokenPayload?: TokenPayload;
+    candidateId?: string;
+  }
 }

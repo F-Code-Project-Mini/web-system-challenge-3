@@ -1,46 +1,46 @@
-import type { RefreshTokenType } from "~/types/auth.type";
-import type { LoginInput, UserType } from "~/types/user.types";
-import { privateApi, publicApi } from "~/utils/axiosInstance";
+import type { RefreshTokenType } from '~/types/auth.type';
+import type { LoginInput, UserType } from '~/types/user.types';
+import { privateApi, publicApi } from '~/utils/axiosInstance';
 type LoginResponse = { message: string; result: UserType; isFirstLogin?: boolean };
 class AuthApi {
-    static login = async ({ email, password, role }: LoginInput) => {
-        const response = await privateApi.post<LoginResponse>("/auth/login", {
-            email,
-            password,
-            role,
-        });
+  static login = async ({ email, password, role }: LoginInput) => {
+    const response = await privateApi.post<LoginResponse>('/auth/login', {
+      email,
+      password,
+      role,
+    });
 
-        return response?.data || [];
-    };
-    static refreshToken = async () => {
-        const response = await publicApi.post<RefreshTokenType>(
-            "/auth/refresh",
-            {},
-            {
-                withCredentials: true,
-            },
-        );
-        return response.data;
-    };
+    return response?.data || [];
+  };
+  static refreshToken = async () => {
+    const response = await publicApi.post<RefreshTokenType>(
+      '/auth/refresh',
+      {},
+      {
+        withCredentials: true,
+      },
+    );
+    return response.data;
+  };
 
-    static activeAccount = async (token: string) => {
-        const response = await publicApi.get<{ result: UserType }>(`/auth/active/token/${token}`);
-        return response.data?.result;
-    };
-    static setPassword = async (token: string, password: string, confirmPassword: string) => {
-        const response = await publicApi.post<{ message: string }>(`/auth/set-password/token/${token}`, {
-            password,
-            confirmPassword,
-        });
-        return response.data;
-    };
-    static logout = async () => {
-        const response = await privateApi.post("/auth/logout", {});
-        return response.data;
-    };
-    static getInfo = async () => {
-        const response = await privateApi.get<{ result: UserType }>("/auth/get-info");
-        return response.data.result;
-    };
+  static activeAccount = async (token: string) => {
+    const response = await publicApi.get<{ result: UserType }>(`/auth/active/token/${token}`);
+    return response.data?.result;
+  };
+  static setPassword = async (token: string, password: string, confirmPassword: string) => {
+    const response = await publicApi.post<{ message: string }>(`/auth/set-password/token/${token}`, {
+      password,
+      confirmPassword,
+    });
+    return response.data;
+  };
+  static logout = async () => {
+    const response = await privateApi.post('/auth/logout', {});
+    return response.data;
+  };
+  static getInfo = async () => {
+    const response = await privateApi.get<{ result: UserType }>('/auth/get-info');
+    return response.data.result;
+  };
 }
 export default AuthApi;

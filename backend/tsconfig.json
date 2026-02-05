@@ -6,18 +6,12 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "src/*"
-      ] // Đường dẫn tương đối cho các import (alias)
+      "~/*": ["src/*"] // Đường dẫn tương đối cho các import (alias)
     },
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": true
   },
-  "include": [
-    "src"
-  ],
-  "files": [
-    "src/type.d.ts"
-  ], // Các file dùng để defined global type cho dự án
+  "include": ["src"],
+  "files": ["src/type.d.ts"] // Các file dùng để defined global type cho dự án
 }

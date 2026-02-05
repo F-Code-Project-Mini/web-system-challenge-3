@@ -1,149 +1,147 @@
-import React, { useState } from "react";
-import { Link } from "react-router";
-import { Button } from "../ui/button";
-import { MobileNavLink } from "./NavLink";
-import { House, Send, ServerCrash, Users } from "lucide-react";
-import Helper from "~/utils/helper";
-import useAuth from "~/hooks/useAuth";
-import LocalStorage from "~/utils/localstorage";
-import type { RoleType } from "~/types/user.types";
+import { House, Send, ServerCrash, Users } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link } from 'react-router';
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "~/components/ui/select";
-import Notification from "~/utils/notification";
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select';
+import useAuth from '~/hooks/useAuth';
+import type { RoleType } from '~/types/user.types';
+import Helper from '~/utils/helper';
+import LocalStorage from '~/utils/localstorage';
+import Notification from '~/utils/notification';
+import { Button } from '../ui/button';
+import { MobileNavLink } from './NavLink';
 
 const MenuMobileHeader = ({
-    setShowMobileMenu,
+  setShowMobileMenu,
 }: {
-    setShowMobileMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowMobileMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-    const { isLogin, user, logout } = useAuth();
-    const [currentRole, setCurrentRole] = useState<RoleType>(
-        (LocalStorage.getItem("role") as RoleType) || user?.roles?.[0],
-    );
+  const { isLogin, user, logout } = useAuth();
+  const [currentRole, setCurrentRole] = useState<RoleType>(
+    (LocalStorage.getItem('role') as RoleType) || user?.roles?.[0],
+  );
 
-    const handleSwitchRole = (role: RoleType) => {
-        LocalStorage.setItem("role", role);
-        setCurrentRole(role);
-        setShowMobileMenu(false);
-        Notification.success({ text: `Chuyển sang quyền ${role}` });
-        setTimeout(() => {
-            window.location.href = "/";
-        }, 500);
-    };
-    return (
-        <div className="mt-4 border-t border-gray-100 pt-4 lg:hidden">
-            <nav className="space-y-1">
-                <MobileNavLink
-                    url="/"
-                    name="Trang chủ"
-                    Icon={House}
-                    active={Helper.isActive(location.pathname, "/")}
-                    onClick={() => setShowMobileMenu(false)}
-                />
+  const handleSwitchRole = (role: RoleType) => {
+    LocalStorage.setItem('role', role);
+    setCurrentRole(role);
+    setShowMobileMenu(false);
+    Notification.success({ text: `Chuyển sang quyền ${role}` });
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 500);
+  };
+  return (
+    <div className="mt-4 border-t border-gray-100 pt-4 lg:hidden">
+      <nav className="space-y-1">
+        <MobileNavLink
+          url="/"
+          name="Trang chủ"
+          Icon={House}
+          active={Helper.isActive(location.pathname, '/')}
+          onClick={() => setShowMobileMenu(false)}
+        />
 
-                {isLogin && (
-                    <>
-                        {/* <MobileNavLink
+        {isLogin && (
+          <>
+            {/* <MobileNavLink
                             url="/presents"
                             name="Lịch thuyết trình"
                             Icon={Presentation}
                             active={Helper.isActive(location.pathname, "/presents")}
                             onClick={() => setShowMobileMenu(false)}
                         /> */}
-                        <MobileNavLink
-                            url="/submissions"
-                            name="Nộp sản phẩm"
-                            Icon={Send}
-                            active={Helper.isActive(location.pathname, "/submissions")}
-                            onClick={() => setShowMobileMenu(false)}
-                        />
-                        <MobileNavLink
-                            url="/teams"
-                            name="Danh sách nhóm"
-                            Icon={Users}
-                            active={Helper.isActive(location.pathname, "/teams")}
-                            onClick={() => setShowMobileMenu(false)}
-                        />
-                    </>
-                )}
-                <MobileNavLink
-                    url="https://discord.gg/WvudrJaYD"
-                    name="Hỗ trợ sự cố"
-                    Icon={ServerCrash}
-                    target="_blank"
-                    onClick={() => setShowMobileMenu(false)}
-                />
-            </nav>
+            <MobileNavLink
+              url="/submissions"
+              name="Nộp sản phẩm"
+              Icon={Send}
+              active={Helper.isActive(location.pathname, '/submissions')}
+              onClick={() => setShowMobileMenu(false)}
+            />
+            <MobileNavLink
+              url="/teams"
+              name="Danh sách nhóm"
+              Icon={Users}
+              active={Helper.isActive(location.pathname, '/teams')}
+              onClick={() => setShowMobileMenu(false)}
+            />
+          </>
+        )}
+        <MobileNavLink
+          url="https://discord.gg/WvudrJaYD"
+          name="Hỗ trợ sự cố"
+          Icon={ServerCrash}
+          target="_blank"
+          onClick={() => setShowMobileMenu(false)}
+        />
+      </nav>
 
-            {isLogin ? (
-                <div className="mt-4 border-t border-gray-100 pt-4">
-                    <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-gray-100/60 to-gray-500 text-sm font-semibold text-gray-700">
-                            {user.fullName.charAt(0)}
-                        </div>
-                        <div className="flex-1">
-                            <p className="text-sm font-semibold text-gray-900">{user.fullName}</p>
-                            <p className="text-xs text-gray-500">{user.email}</p>
-                        </div>
-                    </div>
-                    {user.roles.length >= 2 && (
-                        <div className="mt-3">
-                            <label className="mb-2 block px-1 text-xs font-semibold text-gray-500 uppercase">
-                                Chuyển quyền
-                            </label>
-                            <Select value={currentRole} onValueChange={(value) => handleSwitchRole(value as RoleType)}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Chọn quyền" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Quyền của bạn</SelectLabel>
-                                        {user.roles.map((role) => (
-                                            <SelectItem key={role} value={role}>
-                                                {role === "CANDIDATE"
-                                                    ? "Thí sinh"
-                                                    : role === "MENTOR"
-                                                      ? "Mentor"
-                                                      : role === "JUDGE"
-                                                        ? "Giám khảo"
-                                                        : role === "HOST"
-                                                          ? "Host"
-                                                          : "Admin"}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    )}
-                    <div className="mt-2 space-y-1">
-                        <button
-                            onClick={() => {
-                                setShowMobileMenu(false);
-                                logout();
-                            }}
-                            className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
-                        >
-                            Đăng xuất
-                        </button>
-                    </div>
-                </div>
-            ) : (
-                <div className="mt-4 border-t border-gray-100 pt-4">
-                    <Link to="/login" onClick={() => setShowMobileMenu(false)}>
-                        <Button className="w-full">Đăng nhập</Button>
-                    </Link>
-                </div>
-            )}
+      {isLogin ? (
+        <div className="mt-4 border-t border-gray-100 pt-4">
+          <div className="flex items-center gap-3 rounded-lg bg-gray-50 p-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-gray-100/60 to-gray-500 text-sm font-semibold text-gray-700">
+              {user.fullName.charAt(0)}
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-gray-900">{user.fullName}</p>
+              <p className="text-xs text-gray-500">{user.email}</p>
+            </div>
+          </div>
+          {user.roles.length >= 2 && (
+            <div className="mt-3">
+              <label className="mb-2 block px-1 text-xs font-semibold text-gray-500 uppercase">Chuyển quyền</label>
+              <Select value={currentRole} onValueChange={(value) => handleSwitchRole(value as RoleType)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Chọn quyền" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Quyền của bạn</SelectLabel>
+                    {user.roles.map((role) => (
+                      <SelectItem key={role} value={role}>
+                        {role === 'CANDIDATE'
+                          ? 'Thí sinh'
+                          : role === 'MENTOR'
+                            ? 'Mentor'
+                            : role === 'JUDGE'
+                              ? 'Giám khảo'
+                              : role === 'HOST'
+                                ? 'Host'
+                                : 'Admin'}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          <div className="mt-2 space-y-1">
+            <button
+              onClick={() => {
+                setShowMobileMenu(false);
+                logout();
+              }}
+              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+            >
+              Đăng xuất
+            </button>
+          </div>
         </div>
-    );
+      ) : (
+        <div className="mt-4 border-t border-gray-100 pt-4">
+          <Link to="/login" onClick={() => setShowMobileMenu(false)}>
+            <Button className="w-full">Đăng nhập</Button>
+          </Link>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default MenuMobileHeader;
